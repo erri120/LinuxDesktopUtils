@@ -1,3 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <ItemGroup>
+    <Compile Update="EnvironmentVariableProvider.cs">
+      <DependentUpon>IEnvironmentVariableProvider.cs</DependentUpon>
+    </Compile>
+    <Compile Update="XDGHomeDirectory.cs">
+      <DependentUpon>XDGBaseDirectories.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
