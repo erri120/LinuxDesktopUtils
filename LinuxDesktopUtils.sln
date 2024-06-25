@@ -1,10 +1,38 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solutionItems", ".solutionItems", "{1CAE7D1B-AA7C-45E9-829B-7131CDD140EC}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		Directory.Packages.props = Directory.Packages.props
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.gitattributes = .gitattributes
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BDC8C009-CB57-4C61-B4CF-91DDECCEF9A3}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DB509F10-2CE1-4D4E-81BD-4DE7D49BD351}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils", "src\LinuxDesktopUtils\LinuxDesktopUtils.csproj", "{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C} = {BDC8C009-CB57-4C61-B4CF-91DDECCEF9A3}
 	EndGlobalSection
 EndGlobal
