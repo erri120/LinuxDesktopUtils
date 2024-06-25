@@ -3,6 +3,9 @@ using JetBrains.Annotations;
 
 namespace LinuxDesktopUtils;
 
+/// <summary>
+/// Represents ordered base directories.
+/// </summary>
 [PublicAPI]
 public readonly struct XDGOrderedBaseDirectories
 {
