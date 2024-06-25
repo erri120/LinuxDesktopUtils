@@ -59,8 +59,22 @@ public static class XDGBaseDirectories
     public static readonly XDGHomeDirectory StateHome = new(XDG_STATE_HOME, ".local/state");
 
     // TODO: user-specific executable files
-    // TODO: XDG_DATA_DIRS
-    // TODO: XDG_CONFIG_DIRS
+
+    /// <summary>
+    /// Preference-ordered set of base directories to search for data files in addition to <see cref="DataHome"/>.
+    /// </summary>
+    /// <remarks>
+    /// If <c>$XDG_DATA_DIRS</c> is either not set or empty, a value equal to <c>/usr/local/share/:/usr/share/</c> will be used.
+    /// </remarks>
+    public static readonly XDGOrderedBaseDirectories DataDirs = new(XDG_DATA_DIRS, new []{"/usr/local/share", "/usr/share"});
+
+    /// <summary>
+    /// Preference-ordered set of base directories to search for configuration files in addition to <see cref="ConfigHome"/>.
+    /// </summary>
+    /// <remarks>
+    /// If <c>$XDG_CONFIG_DIRS</c> is either not set or empty, a value equal to <c>/etc/xdg</c> will be used.
+    /// </remarks>
+    public static readonly XDGOrderedBaseDirectories ConfigDirs = new(XDG_CONFIG_DIRS, new []{"/etc/xdg"});
 
     /// <summary>
     /// Directory for user-specific non-essential data files.
