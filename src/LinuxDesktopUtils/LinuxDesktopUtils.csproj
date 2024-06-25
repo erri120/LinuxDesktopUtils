@@ -6,5 +6,11 @@
     <Compile Update="XDGHomeDirectory.cs">
       <DependentUpon>XDGBaseDirectories.cs</DependentUpon>
     </Compile>
+    <Compile Update="XDGOrderedBaseDirectories.cs">
+      <DependentUpon>XDGBaseDirectories.cs</DependentUpon>
+    </Compile>
+    <Compile Update="XDGRuntimeDirectory.cs">
+      <DependentUpon>XDGBaseDirectories.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

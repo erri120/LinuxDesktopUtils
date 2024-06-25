@@ -18,7 +18,6 @@ public static class XDGBaseDirectories
     private const string XDG_DATA_DIRS = nameof(XDG_DATA_DIRS);
     private const string XDG_CONFIG_DIRS = nameof(XDG_CONFIG_DIRS);
     private const string XDG_CACHE_HOME = nameof(XDG_CACHE_HOME);
-    private const string XDG_RUNTIME_DIR = nameof(XDG_RUNTIME_DIR);
     // ReSharper restore InconsistentNaming
 
     /// <summary>
@@ -58,15 +57,13 @@ public static class XDGBaseDirectories
     /// </remarks>
     public static readonly XDGHomeDirectory StateHome = new(XDG_STATE_HOME, ".local/state");
 
-    // TODO: user-specific executable files
-
     /// <summary>
     /// Preference-ordered set of base directories to search for data files in addition to <see cref="DataHome"/>.
     /// </summary>
     /// <remarks>
     /// If <c>$XDG_DATA_DIRS</c> is either not set or empty, a value equal to <c>/usr/local/share/:/usr/share/</c> will be used.
     /// </remarks>
-    public static readonly XDGOrderedBaseDirectories DataDirs = new(XDG_DATA_DIRS, new []{"/usr/local/share", "/usr/share"});
+    public static readonly XDGOrderedBaseDirectories DataDirectories = new(XDG_DATA_DIRS, new []{"/usr/local/share", "/usr/share"});
 
     /// <summary>
     /// Preference-ordered set of base directories to search for configuration files in addition to <see cref="ConfigHome"/>.
@@ -74,7 +71,7 @@ public static class XDGBaseDirectories
     /// <remarks>
     /// If <c>$XDG_CONFIG_DIRS</c> is either not set or empty, a value equal to <c>/etc/xdg</c> will be used.
     /// </remarks>
-    public static readonly XDGOrderedBaseDirectories ConfigDirs = new(XDG_CONFIG_DIRS, new []{"/etc/xdg"});
+    public static readonly XDGOrderedBaseDirectories ConfigDirectories = new(XDG_CONFIG_DIRS, new []{"/etc/xdg"});
 
     /// <summary>
     /// Directory for user-specific non-essential data files.
@@ -85,5 +82,13 @@ public static class XDGBaseDirectories
     /// </remarks>
     public static readonly XDGHomeDirectory CacheHome = new(XDG_STATE_HOME, ".cache");
 
-    // TODO: XDG_RUNTIME_DIR
+    /// <summary>
+    /// Directory for user-specific non-essential runtime files and other file objects (such as sockets, named pipes, ...)
+    /// </summary>
+    /// <remarks>
+    /// If <c>$XDG_RUNTIME_DIR</c> is not set applications should fall back to a replacement directory with similar capabilities and print a warning message.
+    /// Applications should use this directory for communication and synchronization purposes and should not place larger files in it,
+    /// since it might reside in runtime memory and cannot necessarily be swapped out to disk.
+    /// </remarks>
+    public static readonly XDGRuntimeDirectory RuntimeDirectory;
 }
