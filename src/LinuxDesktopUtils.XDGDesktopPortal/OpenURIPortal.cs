@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -40,9 +41,9 @@ public static class OpenUriPortal
             throw new ArgumentException($"URIs with the `file` scheme are explicitly not supported by this method. Use {nameof(OpenFileAsync)} instead.", nameof(uri));
 
         cancellationToken.ThrowIfCancellationRequested();
-        var openUri = new OrgFreedesktopPortalOpenURI(connection, DBusHelper.BusName, DBusHelper.ObjectPath);
+        var instance = await ConnectAsync(connection, requiredVersion: 0).ConfigureAwait(false);
 
-        var res = await openUri.OpenURIAsync(
+        var res = await instance.OpenURIAsync(
             parentWindow: windowIdentifier.ToString(),
             uri: uri.ToString(),
             options: (options ?? OpenUriOptions.Default).ToVarDict()
@@ -69,9 +70,9 @@ public static class OpenUriPortal
         using var safeFileHandle = file.IsT1 ? file.AsT1 : File.OpenHandle(file.AsT0.Value);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var openUri = new OrgFreedesktopPortalOpenURI(connection, DBusHelper.BusName, DBusHelper.ObjectPath);
+        var instance = await ConnectAsync(connection, requiredVersion: 2).ConfigureAwait(false);
 
-        var res = await openUri.OpenFileAsync(
+        var res = await instance.OpenFileAsync(
             parentWindow: windowIdentifier.ToString(),
             fd: safeFileHandle,
             options: (options ?? OpenFileOptions.Default).ToVarDict()
@@ -96,14 +97,34 @@ public static class OpenUriPortal
         using var safeFileHandle = file.IsT1 ? file.AsT1 : File.OpenHandle(file.AsT0.Value);
 
         cancellationToken.ThrowIfCancellationRequested();
-        var openUri = new OrgFreedesktopPortalOpenURI(connection, DBusHelper.BusName, DBusHelper.ObjectPath);
+        var instance = await ConnectAsync(connection, requiredVersion: 3).ConfigureAwait(false);
 
-        var res = await openUri.OpenDirectoryAsync(
+        var res = await instance.OpenDirectoryAsync(
             parentWindow: windowIdentifier.ToString(),
             fd: safeFileHandle,
             options: DBusHelper.EmptyVarDict
         ).ConfigureAwait(false);
 
         return await RequestWrapper.Create(connection, res, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static ValueTask<OrgFreedesktopPortalOpenURI> ConnectAsync(
+        Connection connection,
+        uint requiredVersion,
+        [CallerMemberName] string? callerName = null)
+    {
+        var instance = new OrgFreedesktopPortalOpenURI(connection, destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
+        return requiredVersion == 0 ? new ValueTask<OrgFreedesktopPortalOpenURI>(instance) : VerifyAsync(instance, requiredVersion, callerName ?? string.Empty);
+    }
+
+    private static async ValueTask<OrgFreedesktopPortalOpenURI> VerifyAsync(
+        OrgFreedesktopPortalOpenURI instance,
+        uint requiredVersion,
+        string methodName)
+    {
+        var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
+        if (version < requiredVersion) throw new PortalVersionException(methodName, requiredVersion, version);
+
+        return instance;
     }
 }

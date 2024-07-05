@@ -17,6 +17,7 @@ public static class Program
 
         using var cts = new CancellationTokenSource();
 
+
         using (PosixSignalRegistration.Create(PosixSignal.SIGINT, _ => cts.Cancel()))
         {
             try
