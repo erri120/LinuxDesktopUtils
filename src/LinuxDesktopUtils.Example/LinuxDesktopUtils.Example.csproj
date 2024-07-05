@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LinuxDesktopUtils.XDGDesktopPortal\LinuxDesktopUtils.XDGDesktopPortal.csproj" />
+      <ProjectReference Include="..\LinuxDesktopUtils\LinuxDesktopUtils.csproj" />
+    </ItemGroup>
+
+</Project>

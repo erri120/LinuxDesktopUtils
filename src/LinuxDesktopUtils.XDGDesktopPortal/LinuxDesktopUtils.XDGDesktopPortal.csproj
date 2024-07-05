@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+        <PackageReference Include="OneOf" />
+        <PackageReference Include="Tmds.DBus.Protocol" />
+        <PackageReference Include="Tmds.DBus.SourceGenerator">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="TransparentValueObjects" PrivateAssets="all" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <Target Name="ValidateSubmodule" AfterTargets="BeforeBuild">
+        <Error Condition="!Exists('..\..\extern\flatpak\xdg-desktop-portal')" Text="Missing submodule! Make sure to run 'git submodule update --init --recursive'" />
+    </Target>
+
+    <ItemGroup>
+        <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DBusGeneratorMode" />
+
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Request.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.Request.xml</Link>
+        </AdditionalFiles>
+
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.OpenURI.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.OpenURI.xml</Link>
+        </AdditionalFiles>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="OpenUriOptions.cs">
+        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+</Project>

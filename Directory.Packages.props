@@ -6,5 +6,9 @@
     </PackageVersion>
     <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="OneOf" Version="3.0.271" />
+    <PackageVersion Include="Tmds.DBus.Protocol" Version="0.18.0" />
+    <PackageVersion Include="Tmds.DBus.SourceGenerator" Version="0.0.17" />
+    <PackageVersion Include="TransparentValueObjects" Version="1.0.1" />
   </ItemGroup>
 </Project>
