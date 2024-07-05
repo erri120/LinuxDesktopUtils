@@ -10,23 +10,22 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 [PublicAPI]
 public partial struct WindowIdentifier
 {
-    private readonly OneOf<Empty, X11, Wayland> _value;
+    private readonly OneOf<X11, Wayland> _value;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    public WindowIdentifier(OneOf<Empty, X11, Wayland> value)
+    public WindowIdentifier(OneOf<X11, Wayland> value)
     {
         _value = value;
     }
 
     /// <inheritdoc/>
-    public override string ToString()
+    public readonly override string ToString()
     {
         return _value.Match(
             f0: value => value.ToString(),
-            f1: value => value.ToString(),
-            f2: value => value.ToString()
+            f1: value => value.ToString()
         );
     }
 
@@ -39,11 +38,6 @@ public partial struct WindowIdentifier
     /// Implicit operator.
     /// </summary>
     public static implicit operator WindowIdentifier(Wayland value) => new(value);
-
-    /// <summary>
-    /// Implicit operator.
-    /// </summary>
-    public static implicit operator WindowIdentifier(Empty value) => new(value);
 
     /// <summary>
     /// Represents an X11 window identifier.
@@ -72,14 +66,5 @@ public partial struct WindowIdentifier
     {
         /// <inheritdoc/>
         public override string ToString() => $"wayland:{Value}";
-    }
-
-    /// <summary>
-    /// Represents an empty window identifier.
-    /// </summary>
-    public readonly struct Empty
-    {
-        /// <inheritdoc/>
-        public override string ToString() => string.Empty;
     }
 }

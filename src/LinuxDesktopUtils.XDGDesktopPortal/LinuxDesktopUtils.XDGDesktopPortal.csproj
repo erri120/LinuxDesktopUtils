@@ -31,5 +31,8 @@
       <Compile Update="OpenUriOptions.cs">
         <DependentUpon>OpenURIPortal.cs</DependentUpon>
       </Compile>
+      <Compile Update="OpenFileInDirectoryOptions.cs">
+        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

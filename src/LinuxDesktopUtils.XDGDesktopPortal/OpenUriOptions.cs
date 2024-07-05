@@ -11,11 +11,6 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public record OpenUriOptions : IPortalOptions
 {
     /// <summary>
-    /// Default values.
-    /// </summary>
-    public static readonly OpenUriOptions Default = new();
-
-    /// <summary>
     /// Whether to allow the chosen application to write to the file.
     /// </summary>
     /// <remarks>
@@ -31,6 +26,8 @@ public record OpenUriOptions : IPortalOptions
     /// </remarks>
     public bool Ask { get; init; }
 
+    internal readonly string HandleToken = DBusHelper.CreateHandleToken();
+
     /// <inheritdoc/>
     public Dictionary<string, Variant> ToVarDict()
     {
@@ -38,6 +35,7 @@ public record OpenUriOptions : IPortalOptions
         {
             { "writable", new Variant(Writeable) },
             { "ask", new Variant(Ask) },
+            { "handle_token", new Variant(HandleToken) },
         };
     }
 }

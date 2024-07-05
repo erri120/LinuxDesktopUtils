@@ -1,12 +1,8 @@
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
-using Microsoft.Win32.SafeHandles;
-using OneOf;
-using Tmds.DBus.Protocol;
 using Tmds.DBus.SourceGenerator;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
@@ -20,111 +16,132 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 /// https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.OpenURI.html
 /// </remarks>
 [PublicAPI]
-public static class OpenUriPortal
+public class OpenUriPortal : IPortal
 {
+    private readonly DesktopPortalConnectionManager _connectionManager;
+    private readonly OrgFreedesktopPortalOpenURI _instance;
+
+    /// <inheritdoc/>
+    public uint Version { get; }
+
+    private OpenUriPortal(
+        DesktopPortalConnectionManager connectionManager,
+        OrgFreedesktopPortalOpenURI instance,
+        uint version)
+    {
+        _connectionManager = connectionManager;
+        _instance = instance;
+        Version = version;
+    }
+
+    internal static async ValueTask<OpenUriPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
+    {
+        var instance = new OrgFreedesktopPortalOpenURI(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
+        var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
+
+        return new OpenUriPortal(connectionManager, instance, version);
+    }
+
     /// <summary>
     /// Asks to open a URI.
     /// </summary>
-    /// <param name="connection">DBus connection to use.</param>
-    /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="uri">The Uri to open.</param>
+    /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
-    public static async Task<Response> OpenUriAsync(
-        Connection connection,
-        WindowIdentifier windowIdentifier,
+    public async Task<Response> OpenUriAsync(
         Uri uri,
+        Optional<WindowIdentifier> windowIdentifier = default,
         OpenUriOptions? options = null,
-        CancellationToken cancellationToken = default)
+        Optional<CancellationToken> cancellationToken = default)
     {
         if (uri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException($"URIs with the `file` scheme are explicitly not supported by this method. Use {nameof(OpenFileAsync)} instead.", nameof(uri));
 
-        cancellationToken.ThrowIfCancellationRequested();
-        var instance = await ConnectAsync(connection, requiredVersion: 0).ConfigureAwait(false);
+        const uint addedInVersion = 1;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
-        var res = await instance.OpenURIAsync(
-            parentWindow: windowIdentifier.ToString(),
+        options ??= new OpenUriOptions();
+
+        var request = await _connectionManager.CreateRequestAsync(options.HandleToken, cancellationToken).ConfigureAwait(false);
+        await using var _ = request.ConfigureAwait(false);
+
+        var returnedRequestObjectPath = await _instance.OpenURIAsync(
+            parentWindow: _connectionManager.GetWindowIdentifier(windowIdentifier),
             uri: uri.ToString(),
-            options: (options ?? OpenUriOptions.Default).ToVarDict()
+            options: options.ToVarDict()
         ).ConfigureAwait(false);
 
-        return await RequestWrapper.Create(connection, res, cancellationToken).ConfigureAwait(false);
+        await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
+        return await request.GetTask().ConfigureAwait(false);
     }
 
     /// <summary>
     /// Asks to open a local file.
     /// </summary>
-    /// <param name="connection">DBus connection to use.</param>
+    /// <param name="file">Absolute path to a local file.</param>
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
-    /// <param name="file">Absolute path to the local file or an existing file handle.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
-    public static async Task<Response> OpenFileAsync(
-        Connection connection,
-        WindowIdentifier windowIdentifier,
-        OneOf<FilePath, SafeFileHandle> file,
+    public async Task<Response> OpenFileAsync(
+        FilePath file,
+        Optional<WindowIdentifier> windowIdentifier = default,
         OpenFileOptions? options = null,
-        CancellationToken cancellationToken = default)
+        Optional<CancellationToken> cancellationToken = default)
     {
-        using var safeFileHandle = file.IsT1 ? file.AsT1 : File.OpenHandle(file.AsT0.Value);
+        const uint addedInVersion = 2;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
-        cancellationToken.ThrowIfCancellationRequested();
-        var instance = await ConnectAsync(connection, requiredVersion: 2).ConfigureAwait(false);
+        using var safeFileHandle = File.OpenHandle(file.Value);
 
-        var res = await instance.OpenFileAsync(
-            parentWindow: windowIdentifier.ToString(),
+        options ??= new OpenFileOptions();
+
+        var request = await _connectionManager.CreateRequestAsync(options.HandleToken, cancellationToken).ConfigureAwait(false);
+        await using var _ = request.ConfigureAwait(false);
+
+        var returnedRequestObjectPath = await _instance.OpenFileAsync(
+            parentWindow: _connectionManager.GetWindowIdentifier(windowIdentifier),
             fd: safeFileHandle,
-            options: (options ?? OpenFileOptions.Default).ToVarDict()
+            options: options.ToVarDict()
         ).ConfigureAwait(false);
 
-        return await RequestWrapper.Create(connection, res, cancellationToken).ConfigureAwait(false);
+        await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
+        return await request.GetTask().ConfigureAwait(false);
     }
 
     /// <summary>
     /// Asks to open the directory containing a local file in the file browser.
     /// </summary>
-    /// <param name="connection">DBus connection to use.</param>
+    /// <param name="file">Absolute path to a local file.</param>
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
-    /// <param name="file">Absolute path to the local file or an existing file handle.</param>
+    /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
-    public static async Task<Response> OpenFileInDirectoryAsync(
-        Connection connection,
-        WindowIdentifier windowIdentifier,
-        OneOf<FilePath, SafeFileHandle> file,
-        CancellationToken cancellationToken = default)
+    public async Task<Response> OpenFileInDirectoryAsync(
+        FilePath file,
+        Optional<WindowIdentifier> windowIdentifier = default,
+        OpenFileInDirectoryOptions? options = null,
+        Optional<CancellationToken> cancellationToken = default)
     {
-        using var safeFileHandle = file.IsT1 ? file.AsT1 : File.OpenHandle(file.AsT0.Value);
+        const uint addedInVersion = 3;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
-        cancellationToken.ThrowIfCancellationRequested();
-        var instance = await ConnectAsync(connection, requiredVersion: 3).ConfigureAwait(false);
+        using var safeFileHandle = File.OpenHandle(file.Value);
 
-        var res = await instance.OpenDirectoryAsync(
-            parentWindow: windowIdentifier.ToString(),
+        options ??= new OpenFileInDirectoryOptions();
+
+        var request = await _connectionManager.CreateRequestAsync(options.HandleToken, cancellationToken).ConfigureAwait(false);
+        await using var _ = request.ConfigureAwait(false);
+
+        var returnedRequestObjectPath = await _instance.OpenDirectoryAsync(
+            parentWindow: _connectionManager.GetWindowIdentifier(windowIdentifier),
             fd: safeFileHandle,
-            options: DBusHelper.EmptyVarDict
+            options: options.ToVarDict()
         ).ConfigureAwait(false);
 
-        return await RequestWrapper.Create(connection, res, cancellationToken).ConfigureAwait(false);
-    }
-
-    private static ValueTask<OrgFreedesktopPortalOpenURI> ConnectAsync(
-        Connection connection,
-        uint requiredVersion,
-        [CallerMemberName] string? callerName = null)
-    {
-        var instance = new OrgFreedesktopPortalOpenURI(connection, destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
-        return requiredVersion == 0 ? new ValueTask<OrgFreedesktopPortalOpenURI>(instance) : VerifyAsync(instance, requiredVersion, callerName ?? string.Empty);
-    }
-
-    private static async ValueTask<OrgFreedesktopPortalOpenURI> VerifyAsync(
-        OrgFreedesktopPortalOpenURI instance,
-        uint requiredVersion,
-        string methodName)
-    {
-        var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
-        if (version < requiredVersion) throw new PortalVersionException(methodName, requiredVersion, version);
-
-        return instance;
+        await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
+        return await request.GetTask().ConfigureAwait(false);
     }
 }

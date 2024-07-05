@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Tmds.DBus.Protocol;
@@ -10,11 +11,6 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 [PublicAPI]
 public record OpenFileOptions : IPortalOptions
 {
-    /// <summary>
-    /// Default values.
-    /// </summary>
-    public static readonly OpenFileOptions Default = new();
-
     /// <summary>
     /// Whether to allow the chosen application to write to the file.
     /// </summary>
@@ -31,13 +27,16 @@ public record OpenFileOptions : IPortalOptions
     /// </remarks>
     public bool Ask { get; init; }
 
+    internal readonly string HandleToken = DBusHelper.CreateHandleToken();
+
     /// <inheritdoc/>
     public Dictionary<string, Variant> ToVarDict()
     {
-        return new Dictionary<string, Variant>(System.StringComparer.OrdinalIgnoreCase)
+        return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
         {
             { "writable", new Variant(Writeable) },
             { "ask", new Variant(Ask) },
+            { "handle_token", new Variant(HandleToken) },
         };
     }
 }
