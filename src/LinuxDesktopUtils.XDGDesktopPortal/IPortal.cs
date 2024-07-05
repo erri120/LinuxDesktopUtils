@@ -6,7 +6,7 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 /// Represents a portal instance.
 /// </summary>
 [PublicAPI]
-public interface IPortal
+internal interface IPortal
 {
     /// <summary>
     /// Gets the implemented version of the portal.

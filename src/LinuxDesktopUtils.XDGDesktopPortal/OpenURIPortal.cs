@@ -20,9 +20,10 @@ public class OpenUriPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
     private readonly OrgFreedesktopPortalOpenURI _instance;
+    private readonly uint _version;
 
     /// <inheritdoc/>
-    public uint Version { get; }
+    uint IPortal.Version => _version;
 
     private OpenUriPortal(
         DesktopPortalConnectionManager connectionManager,
@@ -31,7 +32,7 @@ public class OpenUriPortal : IPortal
     {
         _connectionManager = connectionManager;
         _instance = instance;
-        Version = version;
+        _version = version;
     }
 
     internal static async ValueTask<OpenUriPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
@@ -59,7 +60,7 @@ public class OpenUriPortal : IPortal
             throw new ArgumentException($"URIs with the `file` scheme are explicitly not supported by this method. Use {nameof(OpenFileAsync)} instead.", nameof(uri));
 
         const uint addedInVersion = 1;
-        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
         options ??= new OpenUriOptions();
@@ -91,7 +92,7 @@ public class OpenUriPortal : IPortal
         Optional<CancellationToken> cancellationToken = default)
     {
         const uint addedInVersion = 2;
-        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
         using var safeFileHandle = File.OpenHandle(file.Value);
@@ -125,7 +126,7 @@ public class OpenUriPortal : IPortal
         Optional<CancellationToken> cancellationToken = default)
     {
         const uint addedInVersion = 3;
-        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: Version);
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
         using var safeFileHandle = File.OpenHandle(file.Value);
