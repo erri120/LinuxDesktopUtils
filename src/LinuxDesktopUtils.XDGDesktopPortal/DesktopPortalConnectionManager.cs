@@ -45,6 +45,9 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
         return string.Empty;
     }
 
+    /// <summary>
+    /// Gets the <see cref="OpenUriPortal"/>.
+    /// </summary>
     public ValueTask<OpenUriPortal> GetOpenUriPortalAsync()
     {
         if (!_portalInstances.TryGetValue(typeof(OpenUriPortal), out var portal)) return GetOpenUriPortalImplAsync();
