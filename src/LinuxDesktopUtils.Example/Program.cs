@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using LinuxDesktopUtils.XDGDesktopPortal;
+using OneOf;
+using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.Example;
 
@@ -39,6 +41,24 @@ public static class Program
                     AllowMultiple = true,
                     SelectDirectories = false,
                     IsDialogModal = true,
+                    Filters = [
+                        new FileChooser.OpenFileFilter
+                        {
+                            FilterName = "Images",
+                            Patterns =
+                            [
+                                GlobPattern.From("*.ico"),
+                                MimeType.From("image/png"),
+                            ],
+                        },
+                        new FileChooser.OpenFileFilter
+                        {
+                            FilterName = "Text",
+                            Patterns = [
+                                GlobPattern.From("*.txt"),
+                            ],
+                        },
+                    ],
                 },
                 cancellationToken: cts.Token
             );

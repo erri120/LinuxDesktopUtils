@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
+using OneOf;
 using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
@@ -43,8 +45,27 @@ public partial class FileChooser
         /// </remarks>
         public bool SelectDirectories { get; init; }
 
-        // TODO: filters
-        // TODO: current filter
+        // public Array<Struct<string, Array<Struct<uint, string>>>>? Filters { get; init; }
+
+        /// <summary>
+        /// List of file filters for the user.
+        /// </summary>
+        /// <remarks>
+        /// Note that filters are purely there to aid the user in making a useful selection.
+        /// The portal may still allow the user to select files that don’t match any filter criteria,
+        /// and applications must be prepared to handle that.
+        /// </remarks>
+        public OpenFileFilterList? Filters { get; init; }
+
+        /// <summary>
+        /// Set a default filter.
+        /// </summary>
+        /// <remarks>
+        /// If <see cref="Filters"/> is non-null, the default filter must be in that list.
+        /// If the list is null, the default filter will be applied unconditionally.
+        /// </remarks>
+        public OpenFileFilter? DefaultFilter { get; init; }
+
         // TODO: choices
         // TODO: current folder
 
@@ -59,10 +80,60 @@ public partial class FileChooser
                 { "directory", SelectDirectories },
             };
 
-            if (!string.IsNullOrEmpty(AcceptLabel))
-                varDict.Add("accept_label", AcceptLabel);
+            if (!string.IsNullOrEmpty(AcceptLabel)) varDict.Add("accept_label", AcceptLabel);
+            if (Filters is not null) varDict.Add("filters", Filters.ToVariant());
+            if (DefaultFilter is not null) varDict.Add("current_filter", DefaultFilter.ToVariant());
 
             return varDict;
+        }
+    }
+
+    /// <summary>
+    /// Represents a list of <see cref="OpenFileFilter"/>.
+    /// </summary>
+    [PublicAPI]
+    public class OpenFileFilterList : List<OpenFileFilter>
+    {
+        internal Array<Struct<string, Array<Struct<uint, string>>>> ToVariant()
+        {
+            var enumerable = this.Select(filter => filter.ToVariant());
+            return new Array<Struct<string, Array<Struct<uint, string>>>>(enumerable);
+        }
+    }
+
+    /// <summary>
+    /// Represents a filter for the user.
+    /// </summary>
+    [PublicAPI]
+    public class OpenFileFilter
+    {
+        /// <summary>
+        /// Gets the user-visible name of the filter.
+        /// </summary>
+        public required string FilterName { get; init; }
+
+        /// <summary>
+        /// Gets array of patterns.
+        /// </summary>
+        /// <remarks>
+        /// Patterns are case-sensitive. <c>*.ico</c> won't match <c>icon.ICO</c>.
+        /// </remarks>
+        public required OneOf<GlobPattern, MimeType>[] Patterns { get; init; }
+
+        internal Struct<string, Array<Struct<uint, string>>> ToVariant()
+        {
+            var enumerable = Patterns.Select((value, i) =>
+            {
+                var s = value.Match(
+                    f0: x => x.Value,
+                    f1: x => x.Value
+                );
+
+                return new Struct<uint, string>((uint)i, s);
+            });
+
+            var arr = new Array<Struct<uint, string>>(enumerable);
+            return new Struct<string, Array<Struct<uint, string>>>(FilterName, arr);
         }
     }
 }
