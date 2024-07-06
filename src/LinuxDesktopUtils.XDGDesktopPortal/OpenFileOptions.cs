@@ -5,38 +5,41 @@ using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
 
-/// <summary>
-/// Options for <see cref="OpenUriPortal.OpenFileAsync"/>.
-/// </summary>
-[PublicAPI]
-public record OpenFileOptions : IPortalOptions
+public partial class OpenUriPortal
 {
     /// <summary>
-    /// Whether to allow the chosen application to write to the file.
+    /// Options for <see cref="OpenUriPortal.OpenFileAsync"/>.
     /// </summary>
-    /// <remarks>
-    /// This key only takes effect the uri points to a local file that is exported in the document portal, and the chosen application is sandboxed itself.
-    /// </remarks>
-    public bool Writeable { get; init; }
-
-    /// <summary>
-    /// Whether to ask the user to choose an app. If this is false, the portal may use a default or pick the last choice.
-    /// </summary>
-    /// <remarks>
-    /// The ask option was introduced in version 3 of the interface.
-    /// </remarks>
-    public bool Ask { get; init; }
-
-    internal readonly string HandleToken = DBusHelper.CreateHandleToken();
-
-    /// <inheritdoc/>
-    public Dictionary<string, Variant> ToVarDict()
+    [PublicAPI]
+    public record OpenFileOptions : IPortalOptions
     {
-        return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+        /// <summary>
+        /// Whether to allow the chosen application to write to the file.
+        /// </summary>
+        /// <remarks>
+        /// This key only takes effect the uri points to a local file that is exported in the document portal, and the chosen application is sandboxed itself.
+        /// </remarks>
+        public bool Writeable { get; init; }
+
+        /// <summary>
+        /// Whether to ask the user to choose an app. If this is false, the portal may use a default or pick the last choice.
+        /// </summary>
+        /// <remarks>
+        /// The ask option was introduced in version 3 of the interface.
+        /// </remarks>
+        public bool Ask { get; init; }
+
+        internal readonly string HandleToken = DBusHelper.CreateHandleToken();
+
+        /// <inheritdoc/>
+        public Dictionary<string, Variant> ToVarDict()
         {
-            { "writable", new Variant(Writeable) },
-            { "ask", new Variant(Ask) },
-            { "handle_token", new Variant(HandleToken) },
-        };
+            return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "writable", new Variant(Writeable) },
+                { "ask", new Variant(Ask) },
+                { "handle_token", new Variant(HandleToken) },
+            };
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 /// https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.OpenURI.html
 /// </remarks>
 [PublicAPI]
-public class OpenUriPortal : IPortal
+public partial class OpenUriPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
     private readonly OrgFreedesktopPortalOpenURI _instance;

@@ -5,20 +5,23 @@ using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
 
-/// <summary>
-/// Options for <see cref="OpenUriPortal.OpenFileInDirectoryAsync"/>.
-/// </summary>
-[PublicAPI]
-public class OpenFileInDirectoryOptions : IPortalOptions
+public partial class OpenUriPortal
 {
-    internal readonly string HandleToken = DBusHelper.CreateHandleToken();
-
-    /// <inheritdoc/>
-    public Dictionary<string, Variant> ToVarDict()
+    /// <summary>
+    /// Options for <see cref="OpenUriPortal.OpenFileInDirectoryAsync"/>.
+    /// </summary>
+    [PublicAPI]
+    public record OpenFileInDirectoryOptions : IPortalOptions
     {
-        return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+        internal readonly string HandleToken = DBusHelper.CreateHandleToken();
+
+        /// <inheritdoc/>
+        public Dictionary<string, Variant> ToVarDict()
         {
-            { "handle_token", new Variant(HandleToken) },
-        };
+            return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "handle_token", new Variant(HandleToken) },
+            };
+        }
     }
 }
