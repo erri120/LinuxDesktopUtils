@@ -3,23 +3,26 @@ using JetBrains.Annotations;
 namespace LinuxDesktopUtils.XDGDesktopPortal;
 
 /// <summary>
-/// Represents a response from a request.
+/// Represents a response without results.
 /// </summary>
 [PublicAPI]
-public enum Response : uint
+public record Response
 {
     /// <summary>
-    /// Success, the request is carried out.
+    /// Gets the status of the response.
     /// </summary>
-    Success = 0,
+    public required ResponseStatus Status { get; init; }
+}
 
+/// <summary>
+/// Represents a response with results.
+/// </summary>
+[PublicAPI]
+public record Response<T> : Response
+    where T : notnull
+{
     /// <summary>
-    /// The user cancelled the interaction.
+    /// Gets the results of the response.
     /// </summary>
-    UserCancelled = 1,
-
-    /// <summary>
-    /// The user interaction was ended in some other way.
-    /// </summary>
-    Aborted = 2,
+    public required Optional<T> Results { get; init; }
 }
