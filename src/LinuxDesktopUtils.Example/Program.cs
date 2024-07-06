@@ -60,6 +60,26 @@ public static class Program
                             IsDefault = true,
                         },
                     ],
+                    Choices = [
+                        new FileChooser.OpenFileComboBox
+                        {
+                            Id = "encoding",
+                            Label = "Encoding",
+                            Choices = [
+                                new FileChooser.OpenFileChoice
+                                {
+                                    Id = "utf8",
+                                    Label = "Unicode (UTF-8)",
+                                    IsDefault = true,
+                                },
+                                new FileChooser.OpenFileChoice
+                                {
+                                    Id = "latin15",
+                                    Label = "Western",
+                                },
+                            ],
+                        },
+                    ],
                 },
                 cancellationToken: cts.Token
             );

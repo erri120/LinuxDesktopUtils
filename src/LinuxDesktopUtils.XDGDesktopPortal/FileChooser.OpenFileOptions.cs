@@ -58,7 +58,14 @@ public partial class FileChooser
         /// </remarks>
         public OpenFileFilterList? Filters { get; init; }
 
-        // TODO: choices
+        /// <summary>
+        /// List of choices for the user.
+        /// </summary>
+        /// <remarks>
+        /// These choices will be exposed in the file chooser UI to the user.
+        /// </remarks>
+        public OpenFileComboBoxList? Choices { get; init; }
+
         // TODO: current folder
 
         /// <inheritdoc/>
@@ -86,7 +93,7 @@ public partial class FileChooser
                     varDict.Add("filters", Filters.ToVariant());
             }
 
-
+            if (Choices is not null) varDict.Add("choices", Choices.ToVariant());
             return varDict;
         }
     }
@@ -173,6 +180,72 @@ public partial class FileChooser
         {
             return FilterName.GetHashCode(StringComparison.OrdinalIgnoreCase);
         }
+    }
+
+    /// <summary>
+    /// Represents a list of <see cref="OpenFileComboBox"/>.
+    /// </summary>
+    [PublicAPI]
+    public class OpenFileComboBoxList : List<OpenFileComboBox>
+    {
+        internal Array<Struct<string, string, Array<Struct<string, string>>, string>> ToVariant()
+        {
+            var enumerable = this.Select(comboBox => comboBox.ToVariant());
+            return new Array<Struct<string, string, Array<Struct<string, string>>, string>>(enumerable);
+        }
+    }
+
+    /// <summary>
+    /// Represents a combo box added to the file chooser.
+    /// </summary>
+    [PublicAPI]
+    public sealed record OpenFileComboBox
+    {
+        /// <summary>
+        /// Gets or initializes the unique ID of the combo box.
+        /// </summary>
+        public required string Id { get; init; }
+
+        /// <summary>
+        /// Gets or initializes the user-visible label.
+        /// </summary>
+        public required string Label { get; init; }
+
+        /// <summary>
+        /// Gets or initializes the array of choices in the combo box.
+        /// </summary>
+        public required OpenFileChoice[] Choices { get; init; }
+
+        internal Struct<string, string, Array<Struct<string, string>>, string> ToVariant()
+        {
+            var choiceEnumerable = Choices.Select(choice => new Struct<string, string>(choice.Id, choice.Label));
+            var choiceArray = new Array<Struct<string, string>>(choiceEnumerable);
+
+            var defaultChoiceId = Choices.FirstOrDefault(choice => choice.IsDefault)?.Id;
+            return new Struct<string, string, Array<Struct<string, string>>, string>(Id, Label, choiceArray, defaultChoiceId ?? string.Empty);
+        }
+    }
+
+    /// <summary>
+    /// Represents a choice of a combo box in the file chooser.
+    /// </summary>
+    [PublicAPI]
+    public sealed record OpenFileChoice
+    {
+        /// <summary>
+        /// Gets or initializes the unique ID of the choice.
+        /// </summary>
+        public required string Id { get; init; }
+
+        /// <summary>
+        /// Gets or initializes the user-visible label.
+        /// </summary>
+        public required string Label { get; init; }
+
+        /// <summary>
+        /// Whether the choice is selected by default.
+        /// </summary>
+        public bool IsDefault { get; init; }
     }
 }
 
