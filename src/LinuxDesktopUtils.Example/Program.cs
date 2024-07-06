@@ -57,6 +57,7 @@ public static class Program
                             Patterns = [
                                 GlobPattern.From("*.txt"),
                             ],
+                            IsDefault = true,
                         },
                     ],
                 },

@@ -57,15 +57,6 @@ public partial class FileChooser
         /// </remarks>
         public OpenFileFilterList? Filters { get; init; }
 
-        /// <summary>
-        /// Set a default filter.
-        /// </summary>
-        /// <remarks>
-        /// If <see cref="Filters"/> is non-null, the default filter must be in that list.
-        /// If the list is null, the default filter will be applied unconditionally.
-        /// </remarks>
-        public OpenFileFilter? DefaultFilter { get; init; }
-
         // TODO: choices
         // TODO: current folder
 
@@ -81,8 +72,19 @@ public partial class FileChooser
             };
 
             if (!string.IsNullOrEmpty(AcceptLabel)) varDict.Add("accept_label", AcceptLabel);
-            if (Filters is not null) varDict.Add("filters", Filters.ToVariant());
-            if (DefaultFilter is not null) varDict.Add("current_filter", DefaultFilter.ToVariant());
+            if (Filters is not null)
+            {
+                var defaultFilterIndex = Filters.FindIndex(filter => filter.IsDefault);
+                if (defaultFilterIndex != -1)
+                {
+                    var defaultFilter = Filters[defaultFilterIndex];
+                    varDict.Add("current_filter", defaultFilter.ToVariant());
+                }
+
+                if (defaultFilterIndex == -1 || Filters.Count > 1)
+                    varDict.Add("filters", Filters.ToVariant());
+            }
+
 
             return varDict;
         }
@@ -108,17 +110,22 @@ public partial class FileChooser
     public class OpenFileFilter
     {
         /// <summary>
-        /// Gets the user-visible name of the filter.
+        /// Gets or initializes the user-visible name of the filter.
         /// </summary>
         public required string FilterName { get; init; }
 
         /// <summary>
-        /// Gets array of patterns.
+        /// Gets or initializes an array of patterns.
         /// </summary>
         /// <remarks>
         /// Patterns are case-sensitive. <c>*.ico</c> won't match <c>icon.ICO</c>.
         /// </remarks>
         public required OneOf<GlobPattern, MimeType>[] Patterns { get; init; }
+
+        /// <summary>
+        /// Whether this filter is the default for the dialog.
+        /// </summary>
+        public bool IsDefault { get; init; }
 
         internal Struct<string, Array<Struct<uint, string>>> ToVariant()
         {
