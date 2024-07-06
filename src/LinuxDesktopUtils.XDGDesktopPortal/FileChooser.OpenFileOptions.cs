@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -63,7 +64,7 @@ public partial class FileChooser
         /// <inheritdoc/>
         public Dictionary<string, Variant> ToVarDict()
         {
-            var varDict = new Dictionary<string, Variant>(System.StringComparer.OrdinalIgnoreCase)
+            var varDict = new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
             {
                 { "handle_token", HandleToken },
                 { "modal", IsDialogModal },
@@ -107,7 +108,7 @@ public partial class FileChooser
     /// Represents a filter for the user.
     /// </summary>
     [PublicAPI]
-    public class OpenFileFilter
+    public sealed record OpenFileFilter
     {
         /// <summary>
         /// Gets or initializes the user-visible name of the filter.
@@ -141,6 +142,36 @@ public partial class FileChooser
 
             var arr = new Array<Struct<uint, string>>(enumerable);
             return new Struct<string, Array<Struct<uint, string>>>(FilterName, arr);
+        }
+
+        internal static OpenFileFilter FromVariant(VariantValue variantValue)
+        {
+            if (variantValue.Type != VariantValueType.Struct) throw new NotImplementedException();
+            if (variantValue.Count != 2) throw new NotImplementedException();
+
+            var filterNameVariantValue = variantValue.GetItem(0);
+            if (filterNameVariantValue.Type != VariantValueType.String) throw new NotImplementedException();
+
+            var filterName = filterNameVariantValue.GetString();
+            return new OpenFileFilter
+            {
+                FilterName = filterName,
+                Patterns = [],
+            };
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(OpenFileFilter? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(FilterName, other.FilterName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return FilterName.GetHashCode(StringComparison.OrdinalIgnoreCase);
         }
     }
 }

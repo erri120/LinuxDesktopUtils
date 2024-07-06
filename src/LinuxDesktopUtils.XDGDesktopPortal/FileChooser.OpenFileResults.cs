@@ -19,16 +19,25 @@ public partial class FileChooser
         /// <remarks>
         /// All URIs have the <c>file</c> scheme.
         /// </remarks>
-        public Uri[] SelectedFiles { get; internal set; } = Array.Empty<Uri>();
+        public Uri[] SelectedFiles { get; internal set; } = [];
+
+        /// <summary>
+        /// Gets the filter that was selected.
+        /// </summary>
+        public OpenFileFilter? SelectedFilter { get; internal set; }
 
         // TODO: choices
-        // TODO: current filter
 
         internal static OpenFileResults From(Dictionary<string, VariantValue> varDict)
         {
             var res = new OpenFileResults();
 
             res.SelectedFiles = ParseSelectedFiles(varDict);
+
+            if (varDict.TryGetValue("current_filter", out var filterVariantValue))
+            {
+                res.SelectedFilter = OpenFileFilter.FromVariant(filterVariantValue);
+            }
 
             return res;
         }
