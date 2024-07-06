@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,14 +30,14 @@ public static class Program
 
         try
         {
-            var portal = await connectionManager.GetFileChooserPortalAsync().ConfigureAwait(false);
+            var portal = await connectionManager.GetFileChooserPortalAsync();
             var response = await portal.OpenFileAsync(
-                dialogTitle: "Choose one or more directories",
+                dialogTitle: "Choose one or more files",
                 options: new FileChooser.OpenFileOptions
                 {
                     AcceptLabel = "I choose you!",
                     AllowMultiple = true,
-                    SelectDirectories = true,
+                    SelectDirectories = false,
                     IsDialogModal = true,
                 },
                 cancellationToken: cts.Token
@@ -49,6 +50,13 @@ public static class Program
                 {
                     Console.WriteLine($"Selected: {selectedFile}");
                 }
+
+                var first = response.Results.Value.SelectedFiles[0];
+                var openUriPortal = await connectionManager.GetOpenUriPortalAsync();
+                await openUriPortal.OpenFileAsync(
+                    file: first,
+                    cancellationToken: cts.Token
+                );
             }
         }
         catch (Exception e)

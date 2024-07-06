@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using OneOf;
 using Tmds.DBus.SourceGenerator;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
@@ -81,13 +82,13 @@ public partial class OpenUriPortal : IPortal
     /// <summary>
     /// Asks to open a local file.
     /// </summary>
-    /// <param name="file">Absolute path to a local file.</param>
+    /// <param name="file">Absolute path to a local file or a file URI.</param>
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
     /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response> OpenFileAsync(
-        FilePath file,
+        OneOf<FilePath, Uri> file,
         Optional<WindowIdentifier> windowIdentifier = default,
         OpenFileOptions? options = null,
         Optional<CancellationToken> cancellationToken = default)
@@ -96,7 +97,7 @@ public partial class OpenUriPortal : IPortal
         PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
-        using var safeFileHandle = File.OpenHandle(file.Value);
+        using var safeFileHandle = File.OpenHandle(GetFilePath(file));
 
         options ??= new OpenFileOptions();
 
@@ -116,13 +117,13 @@ public partial class OpenUriPortal : IPortal
     /// <summary>
     /// Asks to open the directory containing a local file in the file browser.
     /// </summary>
-    /// <param name="file">Absolute path to a local file.</param>
+    /// <param name="file">Absolute path to a local file or a file URI.</param>
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
     /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response> OpenFileInDirectoryAsync(
-        FilePath file,
+        OneOf<FilePath, Uri> file,
         Optional<WindowIdentifier> windowIdentifier = default,
         OpenFileInDirectoryOptions? options = null,
         Optional<CancellationToken> cancellationToken = default)
@@ -131,7 +132,7 @@ public partial class OpenUriPortal : IPortal
         PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
-        using var safeFileHandle = File.OpenHandle(file.Value);
+        using var safeFileHandle = File.OpenHandle(GetFilePath(file));
 
         options ??= new OpenFileInDirectoryOptions();
 
@@ -146,5 +147,17 @@ public partial class OpenUriPortal : IPortal
 
         await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
         return await request.GetTask().ConfigureAwait(false);
+    }
+
+    private static string GetFilePath(OneOf<FilePath, Uri> file)
+    {
+        if (file.IsT0)
+        {
+            return file.AsT0.Value;
+        }
+
+        var fileUri = file.AsT1;
+        if (!fileUri.IsFile) throw new ArgumentException($"Provided URI `{fileUri}` is not a file URI", nameof(file));
+        return fileUri.LocalPath;
     }
 }
