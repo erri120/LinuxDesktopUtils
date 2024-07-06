@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LinuxDesktopUtils.XDGDesktopPortal\LinuxDesktopUtils.XDGDesktopPortal.csproj" />
-      <ProjectReference Include="..\LinuxDesktopUtils\LinuxDesktopUtils.csproj" />
+      <ProjectReference Include="..\LinuxDesktopUtils.XDGBaseDirectories\LinuxDesktopUtils.XDGBaseDirectories.csproj" />
     </ItemGroup>
 
 </Project>

@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BDC8C009-CB5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DB509F10-2CE1-4D4E-81BD-4DE7D49BD351}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils", "src\LinuxDesktopUtils\LinuxDesktopUtils.csproj", "{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils.XDGBaseDirectories", "src\LinuxDesktopUtils.XDGBaseDirectories\LinuxDesktopUtils.XDGBaseDirectories.csproj", "{5F850A06-DCA1-4D07-AF7C-83E6E7F5396C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils.XDGDesktopPortal", "src\LinuxDesktopUtils.XDGDesktopPortal\LinuxDesktopUtils.XDGDesktopPortal.csproj", "{6CA0847D-205F-43A4-B9FE-C7F78D07B9AD}"
 EndProject
