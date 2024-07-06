@@ -29,13 +29,27 @@ public static class Program
 
         try
         {
-            var openUriPortal = await connectionManager.GetOpenUriPortalAsync().ConfigureAwait(false);
-            var response = await openUriPortal.OpenFileAsync(
-                file: FilePath.From(path),
+            var portal = await connectionManager.GetFileChooserPortalAsync().ConfigureAwait(false);
+            var response = await portal.OpenFileAsync(
+                dialogTitle: "Choose one or more directories",
+                options: new FileChooser.OpenFileOptions
+                {
+                    AcceptLabel = "I choose you!",
+                    AllowMultiple = true,
+                    SelectDirectories = true,
+                    IsDialogModal = true,
+                },
                 cancellationToken: cts.Token
-            ).ConfigureAwait(false);
+            );
 
-            Console.WriteLine(response);
+            Console.WriteLine(response.Status);
+            if (response.Status == ResponseStatus.Success)
+            {
+                foreach (var selectedFile in response.Results.Value.SelectedFiles)
+                {
+                    Console.WriteLine($"Selected: {selectedFile}");
+                }
+            }
         }
         catch (Exception e)
         {

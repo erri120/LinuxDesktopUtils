@@ -57,8 +57,7 @@ public partial class OpenUriPortal : IPortal
         OpenUriOptions? options = null,
         Optional<CancellationToken> cancellationToken = default)
     {
-        if (uri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
-            throw new ArgumentException($"URIs with the `file` scheme are explicitly not supported by this method. Use {nameof(OpenFileAsync)} instead.", nameof(uri));
+        if (uri.IsFile) throw new ArgumentException($"URIs with the `file` scheme are explicitly not supported by this method. Use {nameof(OpenFileAsync)} instead.", nameof(uri));
 
         const uint addedInVersion = 1;
         PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);

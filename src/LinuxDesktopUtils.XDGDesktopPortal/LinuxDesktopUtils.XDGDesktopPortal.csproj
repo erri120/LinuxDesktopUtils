@@ -25,14 +25,28 @@
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
             <Link>DBusXml\org.freedesktop.portal.OpenURI.xml</Link>
         </AdditionalFiles>
+
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.FileChooser.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.FileChooser.xml</Link>
+        </AdditionalFiles>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="OpenUriOptions.cs">
+      <Compile Update="OpenUriPortal.OpenUriOptions.cs">
         <DependentUpon>OpenURIPortal.cs</DependentUpon>
       </Compile>
-      <Compile Update="OpenFileInDirectoryOptions.cs">
+      <Compile Update="OpenUriPortal.OpenFileInDirectoryOptions.cs">
         <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      </Compile>
+      <Compile Update="OpenUriPortal.OpenFileOptions.cs">
+        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      </Compile>
+      <Compile Update="FileChooser.OpenFileOptions.cs">
+        <DependentUpon>FileChooser.cs</DependentUpon>
+      </Compile>
+      <Compile Update="FileChooser.OpenFileResults.cs">
+        <DependentUpon>FileChooser.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

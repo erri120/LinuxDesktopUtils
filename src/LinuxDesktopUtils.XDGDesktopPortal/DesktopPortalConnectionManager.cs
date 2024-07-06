@@ -48,19 +48,26 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
     /// <summary>
     /// Gets the <see cref="OpenUriPortal"/>.
     /// </summary>
-    public ValueTask<OpenUriPortal> GetOpenUriPortalAsync()
+    public ValueTask<OpenUriPortal> GetOpenUriPortalAsync() => GetPortalAsync(OpenUriPortal.CreateAsync);
+
+    /// <summary>
+    /// Gets the <see cref="FileChooser"/>.
+    /// </summary>
+    public ValueTask<FileChooser> GetFileChooserPortalAsync() => GetPortalAsync(FileChooser.CreateAsync);
+
+    private ValueTask<T> GetPortalAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {
-        if (!_portalInstances.TryGetValue(typeof(OpenUriPortal), out var portal)) return GetOpenUriPortalImplAsync();
-        Debug.Assert(portal is OpenUriPortal);
-        return new ValueTask<OpenUriPortal>((portal as OpenUriPortal)!);
+        if (!_portalInstances.TryGetValue(typeof(T), out var portal)) return GetPortalImplAsync(factory);
+        Debug.Assert(portal is T);
+        return new ValueTask<T>((portal as T)!);
     }
 
-    private async ValueTask<OpenUriPortal> GetOpenUriPortalImplAsync()
+    private async ValueTask<T> GetPortalImplAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {
-        var portal = await OpenUriPortal.CreateAsync(this).ConfigureAwait(false);
-        var res = _portalInstances.GetOrAdd(typeof(OpenUriPortal), portal);
-        Debug.Assert(res is OpenUriPortal);
-        return (res as OpenUriPortal)!;
+        var portal = await factory(this).ConfigureAwait(false);
+        var res = _portalInstances.GetOrAdd(typeof(T), portal);
+        Debug.Assert(res is T);
+        return (res as T)!;
     }
 
     internal ValueTask<RequestWrapper> CreateRequestAsync(string handleToken, Optional<CancellationToken> customCancellationToken)
@@ -76,6 +83,26 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
             connectionManager: this,
             requestObjectPath,
             cancellationToken: cts.Token
+        );
+    }
+
+    internal ValueTask<RequestWrapper<T>> CreateRequestAsync<T>(
+        string handleToken,
+        RequestWrapper<T>.ResultsDelegate resultsDelegate,
+        Optional<CancellationToken> customCancellationToken) where T : notnull
+    {
+        var cts = customCancellationToken.HasValue
+            ? CancellationTokenSource.CreateLinkedTokenSource(_cts.Token, customCancellationToken.Value)
+            : _cts;
+
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
+        var requestObjectPath = new ObjectPath($"{DBusHelper.ObjectPath}/request/{_senderName}/{handleToken}");
+
+        return RequestWrapper<T>.CreateAsync(
+            connectionManager: this,
+            requestObjectPath,
+            cancellationToken: cts.Token,
+            resultsDelegate
         );
     }
 
