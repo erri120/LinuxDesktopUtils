@@ -50,6 +50,7 @@ public class OpenUriPortal : IPortal
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response> OpenUriAsync(
         Uri uri,
         Optional<WindowIdentifier> windowIdentifier = default,
@@ -85,6 +86,7 @@ public class OpenUriPortal : IPortal
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response> OpenFileAsync(
         FilePath file,
         Optional<WindowIdentifier> windowIdentifier = default,
@@ -119,6 +121,7 @@ public class OpenUriPortal : IPortal
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response> OpenFileInDirectoryAsync(
         FilePath file,
         Optional<WindowIdentifier> windowIdentifier = default,
