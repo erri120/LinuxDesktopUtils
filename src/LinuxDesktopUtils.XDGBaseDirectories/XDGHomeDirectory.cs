@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using JetBrains.Annotations;
 
-namespace LinuxDesktopUtils;
+namespace LinuxDesktopUtils.XDGBaseDirectories;
 
 /// <summary>
 /// Represents a XDG Base Directory for user-specific files.

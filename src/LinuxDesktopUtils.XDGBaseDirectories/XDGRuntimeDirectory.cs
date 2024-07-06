@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace LinuxDesktopUtils;
+namespace LinuxDesktopUtils.XDGBaseDirectories;
 
 /// <summary>
 /// Represents the XDG runtime directory.

@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace LinuxDesktopUtils;
+namespace LinuxDesktopUtils.XDGBaseDirectories;
 
 /// <summary>
 /// Implementation of <see cref="IEnvironmentVariableProvider"/> using <see cref="Environment.GetEnvironmentVariable(string)"/>.

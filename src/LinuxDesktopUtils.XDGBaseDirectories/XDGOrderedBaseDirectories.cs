@@ -1,7 +1,7 @@
 using System;
 using JetBrains.Annotations;
 
-namespace LinuxDesktopUtils;
+namespace LinuxDesktopUtils.XDGBaseDirectories;
 
 /// <summary>
 /// Represents ordered base directories.

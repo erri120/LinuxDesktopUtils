@@ -1,6 +1,6 @@
 using JetBrains.Annotations;
 
-namespace LinuxDesktopUtils;
+namespace LinuxDesktopUtils.XDGBaseDirectories;
 
 /// <summary>
 /// XDG Base Directories according to Version 0.8 of the Specification
@@ -9,7 +9,7 @@ namespace LinuxDesktopUtils;
 /// https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
 /// </remarks>
 [PublicAPI]
-public static class XDGBaseDirectories
+public static class BaseDirectories
 {
     // ReSharper disable InconsistentNaming
     private const string XDG_DATA_HOME = nameof(XDG_DATA_HOME);
