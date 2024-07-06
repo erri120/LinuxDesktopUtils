@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using OneOf;
 using Tmds.DBus.Protocol;
@@ -64,7 +65,7 @@ public partial class FileChooser
         /// <remarks>
         /// These choices will be exposed in the file chooser UI to the user.
         /// </remarks>
-        public OpenFileComboBoxList? Choices { get; init; }
+        public OpenFileChoicesList? Choices { get; init; }
 
         // TODO: current folder
 
@@ -183,15 +184,71 @@ public partial class FileChooser
     }
 
     /// <summary>
-    /// Represents a list of <see cref="OpenFileComboBox"/>.
+    /// Represents a list of <see cref="OpenFileComboBox"/> or <see cref="OpenFileCheckBox"/>.
     /// </summary>
     [PublicAPI]
-    public class OpenFileComboBoxList : List<OpenFileComboBox>
+    public class OpenFileChoicesList : List<OneOf<OpenFileComboBox, OpenFileCheckBox>>
     {
+        internal bool TryGet(string id, out OneOf<OpenFileComboBox, OpenFileCheckBox> found)
+        {
+            foreach (var item in this)
+            {
+                var matches = item.Match(
+                    f0: x => string.Equals(x.Id, id, StringComparison.Ordinal),
+                    f1: x => string.Equals(x.Id, id, StringComparison.Ordinal)
+                );
+
+                if (!matches) continue;
+                found = item;
+                return true;
+            }
+
+            found = default;
+            return false;
+        }
+
         internal Array<Struct<string, string, Array<Struct<string, string>>, string>> ToVariant()
         {
-            var enumerable = this.Select(comboBox => comboBox.ToVariant());
+            var enumerable = this.Select(value => value.Match(
+                f0: x => x.ToVariant(),
+                f1: x => x.ToVariant()
+            ));
+
             return new Array<Struct<string, string, Array<Struct<string, string>>, string>>(enumerable);
+        }
+    }
+
+    /// <summary>
+    /// Represents a checkbox added to the file chooser.
+    /// </summary>
+    [PublicAPI]
+    public sealed record OpenFileCheckBox
+    {
+        /// <summary>
+        /// Gets or initializes the unique ID of the checkbox.
+        /// </summary>
+        public required string Id { get; init; }
+
+        /// <summary>
+        /// Gets or initializes the user-visible label.
+        /// </summary>
+        public required string Label { get; init; }
+
+        /// <summary>
+        /// Gets or initializes default value of the checkbox.
+        /// </summary>
+        public required bool DefaultValue { get; init; }
+
+        internal Struct<string, string, Array<Struct<string, string>>, string> ToVariant()
+        {
+            // As a special case, passing an empty array for the list of choices indicates a boolean choice
+            // that is typically displayed as a check button, using “true” and “false” as the choices.
+            return new Struct<string, string, Array<Struct<string, string>>, string>(
+                Id,
+                Label,
+                [],
+                DefaultValue ? "true" : "false"
+            );
         }
     }
 

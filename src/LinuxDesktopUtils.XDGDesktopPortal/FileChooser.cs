@@ -61,7 +61,7 @@ public partial class FileChooser : IPortal
 
         var request = await _connectionManager.CreateRequestAsync(
             options.HandleToken,
-            resultsDelegate: OpenFileResults.From,
+            resultsDelegate: varDict => OpenFileResults.From(options, varDict),
             cancellationToken
         ).ConfigureAwait(false);
 

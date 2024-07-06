@@ -79,6 +79,12 @@ public static class Program
                                 },
                             ],
                         },
+                        new FileChooser.OpenFileCheckBox
+                        {
+                            Id = "reencode",
+                            Label = "Reencode",
+                            DefaultValue = false,
+                        },
                     ],
                 },
                 cancellationToken: cts.Token
