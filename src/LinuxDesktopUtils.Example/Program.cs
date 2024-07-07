@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using LinuxDesktopUtils.XDGDesktopPortal;
-using OneOf;
-using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.Example;
 

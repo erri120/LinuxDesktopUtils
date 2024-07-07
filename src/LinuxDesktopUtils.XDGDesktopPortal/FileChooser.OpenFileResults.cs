@@ -58,27 +58,20 @@ public partial class FileChooser
             Dictionary<string, VariantValue> varDict)
         {
             if (!varDict.TryGetValue("choices", out var choicesValue)) return [];
-
-            if (choicesValue.Type != VariantValueType.Array) throw new NotImplementedException();
-            if (choicesValue.ItemType != VariantValueType.Struct) throw new NotImplementedException();
+            VariantParsingException.ExpectArray(choicesValue, expectedItemType: VariantValueType.Struct);
 
             var list = new List<OneOf<OpenFileComboBoxResult, OpenFileCheckBoxResult>>(capacity: choicesValue.Count);
             for (var i = 0; i < choicesValue.Count; i++)
             {
                 var element = choicesValue.GetItem(i);
-                if (element.Type != VariantValueType.Struct) throw new NotImplementedException();
-                if (element.Count != 2) throw new NotImplementedException();
+                VariantParsingException.ExpectStruct(element, expectedCount: 2);
 
-                var idValue = element.GetItem(0);
-                if (idValue.Type != VariantValueType.String) throw new NotImplementedException();
+                var id = element.GetItem(0).GetString();
+                var value = element.GetItem(1).GetString();
 
-                var valueValue = element.GetItem(1);
-                if (valueValue.Type != VariantValueType.String) throw new NotImplementedException();
+                if (!input.TryGet(id, out var found))
+                    throw new KeyNotFoundException($"Results contain an unknown choice with id `{id}`");
 
-                var id = idValue.GetString();
-                var value = valueValue.GetString();
-
-                if (!input.TryGet(id, out var found)) throw new NotImplementedException();
                 list.Add(found.Match<OneOf<OpenFileComboBoxResult, OpenFileCheckBoxResult>>(
                     f0: _ => new OpenFileComboBoxResult
                     {
@@ -88,7 +81,10 @@ public partial class FileChooser
                     f1: _ => new OpenFileCheckBoxResult
                     {
                         Id = id,
-                        Value = string.Equals(value, "true", StringComparison.Ordinal) || (string.Equals(value, "false", StringComparison.Ordinal) ? false : throw new NotImplementedException()),
+                        Value = string.Equals(value, "true", StringComparison.Ordinal) ||
+                                (string.Equals(value, "false", StringComparison.Ordinal)
+                                    ? false
+                                    : throw new VariantParsingException($"Expected `false` or `true` but found `{value}`")),
                     }
                 ));
             }
@@ -101,8 +97,8 @@ public partial class FileChooser
                 );
 
                 var matches = list.Select(x => x.Match(
-                    f0: x => x.Id,
-                    f1: x => x.Id
+                    f0: comboBoxResult => comboBoxResult.Id,
+                    f1: checkBoxResult => checkBoxResult.Id
                 )).Any(resultId => resultId.Equals(id, StringComparison.Ordinal));
 
                 if (matches) continue;
@@ -126,10 +122,10 @@ public partial class FileChooser
 
         private static Uri[] ParseSelectedFiles(Dictionary<string, VariantValue> varDict)
         {
-            if (!varDict.TryGetValue("uris", out var urisValue)) throw new NotImplementedException();
+            if (!varDict.TryGetValue("uris", out var urisValue))
+                throw new KeyNotFoundException("Results don't contain selected files");
 
-            if (urisValue.Type != VariantValueType.Array) throw new NotImplementedException();
-            if (urisValue.ItemType != VariantValueType.String) throw new NotImplementedException();
+            VariantParsingException.ExpectArray(urisValue, expectedItemType: VariantValueType.String);
             var stringArray = urisValue.GetArray<string>();
             var selectedFiles = new Uri[stringArray.Length];
 
@@ -137,8 +133,8 @@ public partial class FileChooser
             {
                 var stringItem = stringArray[i];
 
-                if (!Uri.TryCreate(stringItem, UriKind.Absolute, out var selectedFileUri)) throw new NotImplementedException();
-                if (!selectedFileUri.IsFile) throw new NotImplementedException();
+                var selectedFileUri = new Uri(stringItem, UriKind.Absolute);
+                if (!selectedFileUri.IsFile) throw new VariantParsingException($"URI is not a file, schema is `{selectedFileUri.Scheme}`");
 
                 selectedFiles[i] = selectedFileUri;
             }

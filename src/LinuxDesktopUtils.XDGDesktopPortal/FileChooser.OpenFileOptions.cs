@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using OneOf;
 using Tmds.DBus.Protocol;
@@ -154,13 +153,10 @@ public partial class FileChooser
 
         internal static OpenFileFilter FromVariant(VariantValue variantValue)
         {
-            if (variantValue.Type != VariantValueType.Struct) throw new NotImplementedException();
-            if (variantValue.Count != 2) throw new NotImplementedException();
+            VariantParsingException.ExpectType(variantValue, VariantValueType.Struct);
+            VariantParsingException.ExpectCount(variantValue, expectedCount: 2);
 
-            var filterNameVariantValue = variantValue.GetItem(0);
-            if (filterNameVariantValue.Type != VariantValueType.String) throw new NotImplementedException();
-
-            var filterName = filterNameVariantValue.GetString();
+            var filterName = variantValue.GetItem(0).GetString();
             return new OpenFileFilter
             {
                 FilterName = filterName,
