@@ -20,6 +20,8 @@ public static class Program
 
     private static async Task RunAsync()
     {
+        if (string.Equals(Environment.GetEnvironmentVariable("WAIT_FOR_REMOTE_DEBUGGING"), "1", StringComparison.Ordinal)) Console.Read();
+
         var path = Path.Combine(Path.GetDirectoryName(Path.Combine(Environment.ProcessPath ?? "")) ?? "", "tmp.txt");
         var pathDirectory = Path.GetDirectoryName(path)!;
         await File.WriteAllTextAsync(path, "hello world");
@@ -32,7 +34,7 @@ public static class Program
         try
         {
             var secretPortal = await connectionManager.GetSecretPortalAsync();
-            await secretPortal.RetrieveSecret(cancellationToken: cts.Token);
+            await secretPortal.RetrieveSecretAsync(cancellationToken: cts.Token);
 
             var portal = await connectionManager.GetFileChooserPortalAsync();
             var response = await portal.OpenFileAsync(

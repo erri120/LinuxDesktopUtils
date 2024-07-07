@@ -119,6 +119,7 @@ where T : notnull
     private readonly DesktopPortalConnectionManager _connectionManager;
     private readonly TaskCompletionSource<T> _tsc;
     private readonly CancellationTokenRegistration _cancellationTokenRegistration;
+    private readonly CancellationToken _cancellationToken;
 
     private OrgFreedesktopPortalRequest _request;
     private ObjectPath _requestObjectPath;
@@ -133,6 +134,8 @@ where T : notnull
         IDisposable subscriptionDisposable,
         CancellationToken cancellationToken)
     {
+        _cancellationToken = cancellationToken;
+
         _connectionManager = connectionManager;
         _tsc = tsc;
         _request = request;
@@ -140,6 +143,13 @@ where T : notnull
         _subscriptionDisposable = subscriptionDisposable;
 
         _cancellationTokenRegistration = cancellationToken.Register(CancelCallback, this);
+        _cancellationToken = cancellationToken;
+    }
+
+    internal CancellationToken GetCancellationToken()
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
+        return _cancellationToken;
     }
 
     internal Task<T> GetTask()

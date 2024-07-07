@@ -17,7 +17,7 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 /// https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Secret.html
 /// </remarks>
 [PublicAPI]
-public class SecretPortal : IPortal
+public partial class SecretPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
     private readonly OrgFreedesktopPortalSecret _instance;
@@ -54,7 +54,7 @@ public class SecretPortal : IPortal
     /// </remarks>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
     /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
-    public async Task<Response> RetrieveSecret(Optional<CancellationToken> cancellationToken = default)
+    public async Task<Response<RetrieveSecretResult>> RetrieveSecretAsync(Optional<CancellationToken> cancellationToken = default)
     {
         const uint addedInVersion = 1;
         PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
@@ -70,11 +70,8 @@ public class SecretPortal : IPortal
         await using var _ = request.ConfigureAwait(false);
 
         using var tmpFile = TempFile.New();
-        var stream = File.Open(tmpFile.Value, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
-        await using var streamDisposable = stream.ConfigureAwait(false);
-
         var returnedRequestObjectPath = await _instance.RetrieveSecretAsync(
-            fd: stream.SafeFileHandle,
+            fd: File.OpenHandle(tmpFile.Value, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite),
             options: new Dictionary<string, Variant>(StringComparer.Ordinal)
             {
                 { "handle_token", handleToken },
@@ -84,10 +81,23 @@ public class SecretPortal : IPortal
         await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
         var response = await request.GetTask().ConfigureAwait(false);
 
-        stream.Seek(0, SeekOrigin.Begin);
-        var bytes = new byte[stream.Length];
-        await stream.ReadExactlyAsync(bytes).ConfigureAwait(false);
+        if (response.Status != ResponseStatus.Success)
+        {
+            return new Response<RetrieveSecretResult>
+            {
+                Status = response.Status,
+                Results = Optional<RetrieveSecretResult>.None,
+            };
+        }
 
-        return response;
+        var bytes = await File.ReadAllBytesAsync(tmpFile.Value, cancellationToken: request.GetCancellationToken()).ConfigureAwait(false);
+        return new Response<RetrieveSecretResult>
+        {
+            Status = response.Status,
+            Results = new RetrieveSecretResult
+            {
+                Secret = bytes,
+            },
+        };
     }
 }
