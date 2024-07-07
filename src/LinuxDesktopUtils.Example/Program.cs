@@ -20,6 +20,7 @@ public static class Program
     private static async Task RunAsync()
     {
         var path = Path.Combine(Path.GetDirectoryName(Path.Combine(Environment.ProcessPath ?? "")) ?? "", "tmp.txt");
+        var pathDirectory = Path.GetDirectoryName(path)!;
         await File.WriteAllTextAsync(path, "hello world");
 
         await using var connectionManager = await DesktopPortalConnectionManager.ConnectAsync();
@@ -38,6 +39,7 @@ public static class Program
                     AllowMultiple = true,
                     SelectDirectories = false,
                     IsDialogModal = true,
+                    SuggestedFolder = DirectoryPath.From(pathDirectory),
                     Filters = [
                         new FileChooser.OpenFileFilter
                         {

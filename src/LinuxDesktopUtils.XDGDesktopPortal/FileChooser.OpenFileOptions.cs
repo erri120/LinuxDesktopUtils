@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using JetBrains.Annotations;
 using OneOf;
 using Tmds.DBus.Protocol;
@@ -66,7 +67,13 @@ public partial class FileChooser
         /// </remarks>
         public OpenFileChoicesList? Choices { get; init; }
 
-        // TODO: current folder
+        /// <summary>
+        /// Suggested folder from which teh file should be opened.
+        /// </summary>
+        /// <remarks>
+        /// Portal implementations are free to ignore this option.
+        /// </remarks>
+        public Optional<DirectoryPath> SuggestedFolder { get; init; }
 
         /// <inheritdoc/>
         public Dictionary<string, Variant> ToVarDict()
@@ -94,6 +101,14 @@ public partial class FileChooser
             }
 
             if (Choices is not null) varDict.Add("choices", Choices.ToVariant());
+            if (SuggestedFolder.HasValue)
+            {
+                // The byte array contains a path in the same encoding as the file system, and it’s expected to be terminated by a nul byte.
+                // NOTE(erri120): no idea why they made this so complicated, we're just going to default to UTF8
+                var bytes = SuggestedFolder.Value.ToByteArray(encoding: Encoding.UTF8, nullTerminated: true);
+                varDict.Add("current_folder", Variant.FromArray(new Array<byte>(bytes)));
+            }
+
             return varDict;
         }
     }
