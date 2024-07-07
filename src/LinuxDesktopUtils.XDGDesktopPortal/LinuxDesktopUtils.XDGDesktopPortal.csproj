@@ -38,20 +38,29 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="OpenUriPortal.OpenUriOptions.cs">
-        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      <Compile Update="Portals\FileChooser\OpenFileComboBox.cs">
+        <DependentUpon>OpenFileChoicesList.cs</DependentUpon>
       </Compile>
-      <Compile Update="OpenUriPortal.OpenFileInDirectoryOptions.cs">
-        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      <Compile Update="Portals\FileChooser\OpenFileCheckBox.cs">
+        <DependentUpon>OpenFileChoicesList.cs</DependentUpon>
       </Compile>
-      <Compile Update="OpenUriPortal.OpenFileOptions.cs">
-        <DependentUpon>OpenURIPortal.cs</DependentUpon>
+      <Compile Update="Portals\FileChooser\OpenFileFilter.cs">
+        <DependentUpon>OpenFileFilterList.cs</DependentUpon>
       </Compile>
-      <Compile Update="FileChooserPortal.OpenFileOptions.cs">
-        <DependentUpon>FileChooserPortal.cs</DependentUpon>
+      <Compile Update="Portals\FileChooser\OpenFileChoice.cs">
+        <DependentUpon>OpenFileComboBox.cs</DependentUpon>
       </Compile>
-      <Compile Update="FileChooserPortal.OpenFileResults.cs">
-        <DependentUpon>FileChooserPortal.cs</DependentUpon>
+      <Compile Update="Portals\FileChooser\OpenFileCheckBoxResult.cs">
+        <DependentUpon>OpenFileResults.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Portals\FileChooser\OpenFileComboBoxResult.cs">
+        <DependentUpon>OpenFileResults.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Portals\FileChooser\OpenFileFilterList.cs">
+        <DependentUpon>OpenFileOptions.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Portals\FileChooser\OpenFileChoicesList.cs">
+        <DependentUpon>OpenFileOptions.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

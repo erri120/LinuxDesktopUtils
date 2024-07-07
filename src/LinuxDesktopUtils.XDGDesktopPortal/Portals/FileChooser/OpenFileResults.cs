@@ -142,39 +142,5 @@ public partial class FileChooserPortal
             return selectedFiles;
         }
     }
-
-    /// <summary>
-    /// Result of a combo box.
-    /// </summary>
-    [PublicAPI]
-    public sealed record OpenFileComboBoxResult
-    {
-        /// <summary>
-        /// Gets the ID of the combo box.
-        /// </summary>
-        public required string Id { get; init; }
-
-        /// <summary>
-        /// Gets the selected value.
-        /// </summary>
-        public required string Value { get; init; }
-    }
-
-    /// <summary>
-    /// Result of a checkbox.
-    /// </summary>
-    [PublicAPI]
-    public sealed record OpenFileCheckBoxResult
-    {
-        /// <summary>
-        /// Gets the ID of the checkbox.
-        /// </summary>
-        public required string Id { get; init; }
-
-        /// <summary>
-        /// Gets the value of the checkbox.
-        /// </summary>
-        public required bool Value { get; init; }
-    }
 }
 
