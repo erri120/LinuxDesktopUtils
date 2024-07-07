@@ -7,10 +7,10 @@ using Tmds.DBus.Protocol;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
 
-public partial class FileChooser
+public partial class FileChooserPortal
 {
     /// <summary>
-    /// Results of <see cref="FileChooser.OpenFileAsync"/>.
+    /// Results of <see cref="FileChooserPortal.OpenFileAsync"/>.
     /// </summary>
     [PublicAPI]
     public record OpenFileResults

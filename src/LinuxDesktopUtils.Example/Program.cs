@@ -37,7 +37,7 @@ public static class Program
             var portal = await connectionManager.GetFileChooserPortalAsync();
             var response = await portal.OpenFileAsync(
                 dialogTitle: "Choose one or more files",
-                options: new FileChooser.OpenFileOptions
+                options: new FileChooserPortal.OpenFileOptions
                 {
                     AcceptLabel = "I choose you!",
                     AllowMultiple = true,
@@ -45,7 +45,7 @@ public static class Program
                     IsDialogModal = true,
                     SuggestedFolder = DirectoryPath.From(pathDirectory),
                     Filters = [
-                        new FileChooser.OpenFileFilter
+                        new FileChooserPortal.OpenFileFilter
                         {
                             FilterName = "Images",
                             Patterns =
@@ -54,7 +54,7 @@ public static class Program
                                 MimeType.From("image/png"),
                             ],
                         },
-                        new FileChooser.OpenFileFilter
+                        new FileChooserPortal.OpenFileFilter
                         {
                             FilterName = "Text",
                             Patterns = [
@@ -64,25 +64,25 @@ public static class Program
                         },
                     ],
                     Choices = [
-                        new FileChooser.OpenFileComboBox
+                        new FileChooserPortal.OpenFileComboBox
                         {
                             Id = "encoding",
                             Label = "Encoding",
                             Choices = [
-                                new FileChooser.OpenFileChoice
+                                new FileChooserPortal.OpenFileChoice
                                 {
                                     Id = "utf8",
                                     Label = "Unicode (UTF-8)",
                                     IsDefault = true,
                                 },
-                                new FileChooser.OpenFileChoice
+                                new FileChooserPortal.OpenFileChoice
                                 {
                                     Id = "latin15",
                                     Label = "Western",
                                 },
                             ],
                         },
-                        new FileChooser.OpenFileCheckBox
+                        new FileChooserPortal.OpenFileCheckBox
                         {
                             Id = "reencode",
                             Label = "Reencode",

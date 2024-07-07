@@ -47,11 +47,11 @@
       <Compile Update="OpenUriPortal.OpenFileOptions.cs">
         <DependentUpon>OpenURIPortal.cs</DependentUpon>
       </Compile>
-      <Compile Update="FileChooser.OpenFileOptions.cs">
-        <DependentUpon>FileChooser.cs</DependentUpon>
+      <Compile Update="FileChooserPortal.OpenFileOptions.cs">
+        <DependentUpon>FileChooserPortal.cs</DependentUpon>
       </Compile>
-      <Compile Update="FileChooser.OpenFileResults.cs">
-        <DependentUpon>FileChooser.cs</DependentUpon>
+      <Compile Update="FileChooserPortal.OpenFileResults.cs">
+        <DependentUpon>FileChooserPortal.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

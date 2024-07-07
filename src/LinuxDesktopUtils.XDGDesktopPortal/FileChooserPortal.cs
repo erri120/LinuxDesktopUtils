@@ -15,7 +15,7 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 /// https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.FileChooser.html
 /// </remarks>
 [PublicAPI]
-public partial class FileChooser : IPortal
+public partial class FileChooserPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
     private readonly OrgFreedesktopPortalFileChooser _instance;
@@ -24,19 +24,19 @@ public partial class FileChooser : IPortal
     /// <inheritdoc/>
     uint IPortal.Version => _version;
 
-    private FileChooser(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalFileChooser instance, uint version)
+    private FileChooserPortal(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalFileChooser instance, uint version)
     {
         _connectionManager = connectionManager;
         _instance = instance;
         _version = version;
     }
 
-    internal static async ValueTask<FileChooser> CreateAsync(DesktopPortalConnectionManager connectionManager)
+    internal static async ValueTask<FileChooserPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
     {
         var instance = new OrgFreedesktopPortalFileChooser(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
         var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
 
-        return new FileChooser(connectionManager, instance, version);
+        return new FileChooserPortal(connectionManager, instance, version);
     }
 
     /// <summary>
