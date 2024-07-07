@@ -76,4 +76,42 @@ public partial class FileChooserPortal : IPortal
         await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
         return await request.GetTask().ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Asks for a location to save a file.
+    /// </summary>
+    /// <param name="dialogTitle">Title for the file chooser dialog.</param>
+    /// <param name="windowIdentifier">Identifier of the parent window.</param>
+    /// <param name="options">Additional options.</param>
+    /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
+    public async Task<Response<SaveFileResults>> SaveFileAsync(
+        string dialogTitle,
+        Optional<WindowIdentifier> windowIdentifier = default,
+        SaveFileOptions? options = null,
+        Optional<CancellationToken> cancellationToken = default)
+    {
+        const uint addedInVersion = 1;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
+        if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
+
+        options ??= new SaveFileOptions();
+
+        var request = await _connectionManager.CreateRequestAsync(
+            options.HandleToken,
+            resultsDelegate: varDict => SaveFileResults.From(options, varDict),
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        await using var _ = request.ConfigureAwait(false);
+
+        var returnedRequestObjectPath = await _instance.SaveFileAsync(
+            parentWindow: _connectionManager.GetWindowIdentifier(windowIdentifier),
+            title: dialogTitle,
+            options: options.ToVarDict()
+        ).ConfigureAwait(false);
+
+        await request.UpdateAsync(returnedRequestObjectPath).ConfigureAwait(false);
+        return await request.GetTask().ConfigureAwait(false);
+    }
 }

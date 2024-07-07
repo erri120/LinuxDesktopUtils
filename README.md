@@ -12,7 +12,7 @@ The package `LinuxDesktopUtils.XDGDesktopPortals` makes the following [XDG Deskt
 
 - [ ] [File Chooser](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.FileChooser.html) version 4
   - [x] `OpenFile`
-  - [ ] `SaveFile`
+  - [x] `SaveFile`
   - [ ] `SaveFiles`
 - [x] [OpenURI](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.OpenURI.html) version 4
   - [x] `OpenURI`

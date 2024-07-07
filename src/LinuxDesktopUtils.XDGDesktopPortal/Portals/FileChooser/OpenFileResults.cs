@@ -53,7 +53,7 @@ public partial class FileChooserPortal
             return res;
         }
 
-        private static OneOf<OpenFileComboBoxResult, OpenFileCheckBoxResult>[] ParseChoices(
+        internal static OneOf<OpenFileComboBoxResult, OpenFileCheckBoxResult>[] ParseChoices(
             OpenFileChoicesList input,
             Dictionary<string, VariantValue> varDict)
         {
@@ -120,7 +120,7 @@ public partial class FileChooserPortal
             return list.ToArray();
         }
 
-        private static Uri[] ParseSelectedFiles(Dictionary<string, VariantValue> varDict)
+        internal static Uri[] ParseSelectedFiles(Dictionary<string, VariantValue> varDict)
         {
             if (!varDict.TryGetValue("uris", out var urisValue))
                 throw new KeyNotFoundException("Results don't contain selected files");

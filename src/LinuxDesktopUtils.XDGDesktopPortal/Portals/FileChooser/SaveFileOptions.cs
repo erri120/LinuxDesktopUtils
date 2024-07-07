@@ -9,10 +9,10 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public partial class FileChooserPortal
 {
     /// <summary>
-    /// Options for <see cref="FileChooserPortal.OpenFileAsync"/>.
+    /// Options for <see cref="FileChooserPortal.SaveFileAsync"/>.
     /// </summary>
     [PublicAPI]
-    public record OpenFileOptions : IPortalOptions
+    public record SaveFileOptions : IPortalOptions
     {
         internal readonly string HandleToken = DBusHelper.CreateHandleToken();
 
@@ -28,22 +28,6 @@ public partial class FileChooserPortal
         /// Default is true.
         /// </remarks>
         public bool IsDialogModal { get; init; } = true;
-
-        /// <summary>
-        /// Whether multiple files can be selected or not.
-        /// </summary>
-        /// <remarks>
-        /// Default is false, single-selection.
-        /// </remarks>
-        public bool AllowMultiple { get; init; }
-
-        /// <summary>
-        /// Whether to select for folders instead of files.
-        /// </summary>
-        /// <remarks>
-        /// Default is false, to select files.
-        /// </remarks>
-        public bool SelectDirectories { get; init; }
 
         /// <summary>
         /// List of file filters for the user.
@@ -64,12 +48,22 @@ public partial class FileChooserPortal
         public OpenFileChoicesList? Choices { get; init; }
 
         /// <summary>
+        /// Suggested name of the file.
+        /// </summary>
+        public string? SuggestedFileName { get; init; }
+
+        /// <summary>
         /// Suggested folder from which the file should be opened.
         /// </summary>
         /// <remarks>
         /// Portal implementations are free to ignore this option.
         /// </remarks>
         public Optional<DirectoryPath> SuggestedFolder { get; init; }
+
+        /// <summary>
+        /// The current file, when saving an existing file.
+        /// </summary>
+        public Optional<FilePath> CurrentFile { get; init; }
 
         /// <inheritdoc/>
         public Dictionary<string, Variant> ToVarDict()
@@ -78,8 +72,6 @@ public partial class FileChooserPortal
             {
                 { "handle_token", HandleToken },
                 { "modal", IsDialogModal },
-                { "multiple", AllowMultiple },
-                { "directory", SelectDirectories },
             };
 
             if (!string.IsNullOrEmpty(AcceptLabel)) varDict.Add("accept_label", AcceptLabel);
@@ -97,16 +89,23 @@ public partial class FileChooserPortal
             }
 
             if (Choices is not null) varDict.Add("choices", Choices.ToVariant());
+            if (SuggestedFileName is not null) varDict.Add("current_name", SuggestedFileName);
+
             if (SuggestedFolder.HasValue)
             {
                 // The byte array contains a path in the same encoding as the file system, and it’s expected to be terminated by a nul byte.
-                // NOTE(erri120): no idea why they made this so complicated, we're just going to default to UTF8
                 var bytes = SuggestedFolder.Value.ToByteArray(encoding: Encoding.UTF8, nullTerminated: true);
                 varDict.Add("current_folder", Variant.FromArray(new Array<byte>(bytes)));
+            }
+
+            if (CurrentFile.HasValue)
+            {
+                // The byte array contains a path in the same encoding as the file system, and it’s expected to be terminated by a nul byte.
+                var bytes = CurrentFile.Value.ToByteArray(encoding: Encoding.UTF8, nullTerminated: true);
+                varDict.Add("current_file", Variant.FromArray(new Array<byte>(bytes)));
             }
 
             return varDict;
         }
     }
 }
-
