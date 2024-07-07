@@ -45,15 +45,22 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
         return string.Empty;
     }
 
+    // TODO: rename
+    /// <summary>
+    /// Gets the <see cref="FileChooser"/>.
+    /// </summary>
+    public ValueTask<FileChooser> GetFileChooserPortalAsync() => GetPortalAsync(FileChooser.CreateAsync);
+
     /// <summary>
     /// Gets the <see cref="OpenUriPortal"/>.
     /// </summary>
     public ValueTask<OpenUriPortal> GetOpenUriPortalAsync() => GetPortalAsync(OpenUriPortal.CreateAsync);
 
+    // TODO: rename
     /// <summary>
-    /// Gets the <see cref="FileChooser"/>.
+    /// Gets the <see cref="SecretPortal"/>.
     /// </summary>
-    public ValueTask<FileChooser> GetFileChooserPortalAsync() => GetPortalAsync(FileChooser.CreateAsync);
+    public ValueTask<SecretPortal> GetSecretPortalAsync() => GetPortalAsync(SecretPortal.CreateAsync);
 
     private ValueTask<T> GetPortalAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {

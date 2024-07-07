@@ -16,9 +16,9 @@
     <ItemGroup>
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DBusGeneratorMode" />
 
-        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Request.xml">
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.FileChooser.xml">
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
-            <Link>DBusXml\org.freedesktop.portal.Request.xml</Link>
+            <Link>DBusXml\org.freedesktop.portal.FileChooser.xml</Link>
         </AdditionalFiles>
 
         <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.OpenURI.xml">
@@ -26,9 +26,14 @@
             <Link>DBusXml\org.freedesktop.portal.OpenURI.xml</Link>
         </AdditionalFiles>
 
-        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.FileChooser.xml">
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Request.xml">
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
-            <Link>DBusXml\org.freedesktop.portal.FileChooser.xml</Link>
+            <Link>DBusXml\org.freedesktop.portal.Request.xml</Link>
+        </AdditionalFiles>
+
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Secret.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.Secret.xml</Link>
         </AdditionalFiles>
     </ItemGroup>
 

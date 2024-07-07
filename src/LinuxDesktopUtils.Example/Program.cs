@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using LinuxDesktopUtils.XDGDesktopPortal;
@@ -30,6 +31,9 @@ public static class Program
 
         try
         {
+            var secretPortal = await connectionManager.GetSecretPortalAsync();
+            await secretPortal.RetrieveSecret(cancellationToken: cts.Token);
+
             var portal = await connectionManager.GetFileChooserPortalAsync();
             var response = await portal.OpenFileAsync(
                 dialogTitle: "Choose one or more files",

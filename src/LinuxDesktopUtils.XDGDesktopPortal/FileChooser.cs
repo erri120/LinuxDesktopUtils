@@ -40,7 +40,7 @@ public partial class FileChooser : IPortal
     }
 
     /// <summary>
-    ///
+    /// Asks to open one or more files.
     /// </summary>
     /// <param name="dialogTitle">Title for the file chooser dialog.</param>
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
