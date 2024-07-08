@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\LinuxDesktopUtils.XDGDesktopPortal\LinuxDesktopUtils.XDGDesktopPortal.csproj" />
+        <ProjectReference Include="..\..\src\LinuxDesktopUtils.XDGBaseDirectories\LinuxDesktopUtils.XDGBaseDirectories.csproj" />
+    </ItemGroup>
+
+</Project>
