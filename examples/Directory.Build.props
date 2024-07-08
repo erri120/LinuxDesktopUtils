@@ -1,3 +1,9 @@
 <Project>
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+    <PropertyGroup>
+        <!-- https://github.com/meziantou/Meziantou.Analyzer/tree/main/docs/Rules -->
+        <!-- MA0004: Use Task.ConfigureAwait -->
+        <NoWarn>$(NoWarn);MA0004</NoWarn>
+    </PropertyGroup>
 </Project>
