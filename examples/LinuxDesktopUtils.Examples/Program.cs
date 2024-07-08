@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LinuxDesktopUtils.XDGDesktopPortal;
 
-namespace LinuxDesktopUtils.Example;
+namespace LinuxDesktopUtils.Examples;
 
 [SuppressMessage("Usage", "MA0004:Use Task.ConfigureAwait")]
 public static class Program

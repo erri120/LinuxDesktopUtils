@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{7F
 		examples\Directory.Build.props = examples\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils.Example", "examples\LinuxDesktopUtils.Example\LinuxDesktopUtils.Example.csproj", "{0DA24A85-2D0C-4AD8-9042-736328B47A8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinuxDesktopUtils.Examples", "examples\LinuxDesktopUtils.Examples\LinuxDesktopUtils.Examples.csproj", "{0DA24A85-2D0C-4AD8-9042-736328B47A8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
