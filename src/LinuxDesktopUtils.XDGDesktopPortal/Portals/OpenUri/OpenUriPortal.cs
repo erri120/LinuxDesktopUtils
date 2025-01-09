@@ -149,6 +149,37 @@ public partial class OpenUriPortal : IPortal
         return await request.GetTask().ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// Checks if <see cref="OpenUriAsync"/> supports the protocol scheme.
+    /// </summary>
+    /// <param name="value">Uri or a scheme to check</param>
+    /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
+    public async Task<bool> IsSchemeSupportedAsync(
+        OneOf<Uri, string> value,
+        Optional<CancellationToken> cancellationToken = default)
+    {
+        const uint addedInVersion = 5;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
+        if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
+
+        var scheme = value.Match(
+            f0: uri => uri.Scheme,
+            f1: scheme => scheme
+        );
+
+        var handleToken = DBusHelper.CreateHandleToken();
+        var request = await _connectionManager.CreateRequestAsync(handleToken, cancellationToken).ConfigureAwait(false);
+        await using var _ = request.ConfigureAwait(false);
+
+        var isSupported = await _instance.SchemeSupportedAsync(
+            scheme: scheme,
+            options: DBusHelper.EmptyVarDict
+        ).ConfigureAwait(false);
+
+        return isSupported;
+    }
+
     private static string GetFilePath(OneOf<FilePath, Uri> file)
     {
         if (file.IsT0)
