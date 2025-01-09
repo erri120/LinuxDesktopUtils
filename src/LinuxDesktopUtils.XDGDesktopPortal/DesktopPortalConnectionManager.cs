@@ -69,7 +69,16 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
 
     private async ValueTask<T> GetPortalImplAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {
-        var portal = await factory(this).ConfigureAwait(false);
+        T portal;
+        try
+        {
+            portal = await factory(this).ConfigureAwait(false);
+        }
+        catch (Exception e)
+        {
+            throw new PortalUnavailableException(typeof(T), e);
+        }
+
         var res = _portalInstances.GetOrAdd(typeof(T), portal);
         Debug.Assert(res is T);
         return (res as T)!;
