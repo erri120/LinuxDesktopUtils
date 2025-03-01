@@ -42,10 +42,14 @@ where T : notnull
             else
             {
                 var responseStatus = (ResponseStatus)resultTuple.Response;
+                var results = responseStatus is ResponseStatus.Success
+                    ? resultsDelegate(resultTuple.Results)
+                    : Optional<T>.None;
+
                 tsc.TrySetResult(new Response<T>
                 {
                     Status = responseStatus,
-                    Results = resultsDelegate(resultTuple.Results),
+                    Results = results,
                 });
             }
         }, emitOnCapturedContext: false).ConfigureAwait(false);
