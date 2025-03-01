@@ -20,13 +20,13 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public partial class SecretPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
-    private readonly OrgFreedesktopPortalSecret _instance;
+    private readonly OrgFreedesktopPortalSecretProxy _instance;
     private readonly uint _version;
 
     /// <inheritdoc/>
     uint IPortal.Version => _version;
 
-    private SecretPortal(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalSecret instance, uint version)
+    private SecretPortal(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalSecretProxy instance, uint version)
     {
         _connectionManager = connectionManager;
         _instance = instance;
@@ -35,7 +35,7 @@ public partial class SecretPortal : IPortal
 
     internal static async ValueTask<SecretPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
     {
-        var instance = new OrgFreedesktopPortalSecret(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
+        var instance = new OrgFreedesktopPortalSecretProxy(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
         var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
 
         return new SecretPortal(connectionManager, instance, version);
@@ -72,7 +72,7 @@ public partial class SecretPortal : IPortal
         using var tmpFile = TempFile.New();
         var returnedRequestObjectPath = await _instance.RetrieveSecretAsync(
             fd: File.OpenHandle(tmpFile.Value, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite),
-            options: new Dictionary<string, Variant>(StringComparer.Ordinal)
+            options: new Dictionary<string, VariantValue>(StringComparer.Ordinal)
             {
                 { "handle_token", handleToken },
             }

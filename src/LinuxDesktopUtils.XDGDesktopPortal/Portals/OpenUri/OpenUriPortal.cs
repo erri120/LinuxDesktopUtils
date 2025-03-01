@@ -20,7 +20,7 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public partial class OpenUriPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
-    private readonly OrgFreedesktopPortalOpenURI _instance;
+    private readonly OrgFreedesktopPortalOpenURIProxy _instance;
     private readonly uint _version;
 
     /// <inheritdoc/>
@@ -28,7 +28,7 @@ public partial class OpenUriPortal : IPortal
 
     private OpenUriPortal(
         DesktopPortalConnectionManager connectionManager,
-        OrgFreedesktopPortalOpenURI instance,
+        OrgFreedesktopPortalOpenURIProxy instance,
         uint version)
     {
         _connectionManager = connectionManager;
@@ -38,7 +38,7 @@ public partial class OpenUriPortal : IPortal
 
     internal static async ValueTask<OpenUriPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
     {
-        var instance = new OrgFreedesktopPortalOpenURI(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
+        var instance = new OrgFreedesktopPortalOpenURIProxy(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
         var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
 
         return new OpenUriPortal(connectionManager, instance, version);

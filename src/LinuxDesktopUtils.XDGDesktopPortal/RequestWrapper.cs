@@ -17,7 +17,7 @@ where T : notnull
     private RequestWrapper(
         DesktopPortalConnectionManager connectionManager,
         TaskCompletionSource<Response<T>> tsc,
-        OrgFreedesktopPortalRequest request,
+        OrgFreedesktopPortalRequestProxy request,
         ObjectPath requestObjectPath,
         IDisposable subscriptionDisposable,
         CancellationToken cancellationToken,
@@ -26,13 +26,13 @@ where T : notnull
         _resultsDelegate = resultsDelegate;
     }
 
-    protected override ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequest request, TaskCompletionSource<Response<T>> tsc)
+    protected override ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequestProxy request, TaskCompletionSource<Response<T>> tsc)
     {
         return CreateSubscriptionImpl(request, tsc, _resultsDelegate);
     }
 
     private static async ValueTask<IDisposable> CreateSubscriptionImpl(
-        OrgFreedesktopPortalRequest request,
+        OrgFreedesktopPortalRequestProxy request,
         TaskCompletionSource<Response<T>> tsc,
         ResultsDelegate resultsDelegate)
     {
@@ -71,18 +71,18 @@ internal class RequestWrapper : ARequestWrapper<Response>
     private RequestWrapper(
         DesktopPortalConnectionManager connectionManager,
         TaskCompletionSource<Response> tsc,
-        OrgFreedesktopPortalRequest request,
+        OrgFreedesktopPortalRequestProxy request,
         ObjectPath requestObjectPath,
         IDisposable subscriptionDisposable,
         CancellationToken cancellationToken) : base(connectionManager, tsc, request, requestObjectPath, subscriptionDisposable, cancellationToken) { }
 
-    protected override ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequest request, TaskCompletionSource<Response> tsc)
+    protected override ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequestProxy request, TaskCompletionSource<Response> tsc)
     {
         return CreateSubscriptionImpl(request, tsc);
     }
 
     private static async ValueTask<IDisposable> CreateSubscriptionImpl(
-        OrgFreedesktopPortalRequest request,
+        OrgFreedesktopPortalRequestProxy request,
         TaskCompletionSource<Response> tsc)
     {
         return await request.WatchResponseAsync((exception, resultTuple) =>
@@ -121,7 +121,7 @@ where T : notnull
     private readonly CancellationTokenRegistration _cancellationTokenRegistration;
     private readonly CancellationToken _cancellationToken;
 
-    private OrgFreedesktopPortalRequest _request;
+    private OrgFreedesktopPortalRequestProxy _request;
     private ObjectPath _requestObjectPath;
     private IDisposable _subscriptionDisposable;
     private bool _isDisposed;
@@ -129,7 +129,7 @@ where T : notnull
     protected ARequestWrapper(
         DesktopPortalConnectionManager connectionManager,
         TaskCompletionSource<T> tsc,
-        OrgFreedesktopPortalRequest request,
+        OrgFreedesktopPortalRequestProxy request,
         ObjectPath requestObjectPath,
         IDisposable subscriptionDisposable,
         CancellationToken cancellationToken)
@@ -187,7 +187,7 @@ where T : notnull
         _subscriptionDisposable = disposable;
     }
 
-    protected abstract ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequest request, TaskCompletionSource<T> tsc);
+    protected abstract ValueTask<IDisposable> CreateSubscription(OrgFreedesktopPortalRequestProxy request, TaskCompletionSource<T> tsc);
 
     private static void CancelCallback(object? state, CancellationToken cancellationToken)
     {
@@ -226,11 +226,11 @@ where T : notnull
         }
     }
 
-    protected static OrgFreedesktopPortalRequest CreateRequest(
+    protected static OrgFreedesktopPortalRequestProxy CreateRequest(
         DesktopPortalConnectionManager connectionManager,
         ObjectPath requestObjectPath)
     {
-        return new OrgFreedesktopPortalRequest(
+        return new OrgFreedesktopPortalRequestProxy(
             connectionManager.GetConnection(),
             destination: DBusHelper.BusName,
             path: requestObjectPath.ToString()

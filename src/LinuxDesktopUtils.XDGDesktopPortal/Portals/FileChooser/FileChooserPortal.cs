@@ -18,13 +18,13 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public partial class FileChooserPortal : IPortal
 {
     private readonly DesktopPortalConnectionManager _connectionManager;
-    private readonly OrgFreedesktopPortalFileChooser _instance;
+    private readonly OrgFreedesktopPortalFileChooserProxy _instance;
     private readonly uint _version;
 
     /// <inheritdoc/>
     uint IPortal.Version => _version;
 
-    private FileChooserPortal(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalFileChooser instance, uint version)
+    private FileChooserPortal(DesktopPortalConnectionManager connectionManager, OrgFreedesktopPortalFileChooserProxy instance, uint version)
     {
         _connectionManager = connectionManager;
         _instance = instance;
@@ -33,7 +33,7 @@ public partial class FileChooserPortal : IPortal
 
     internal static async ValueTask<FileChooserPortal> CreateAsync(DesktopPortalConnectionManager connectionManager)
     {
-        var instance = new OrgFreedesktopPortalFileChooser(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
+        var instance = new OrgFreedesktopPortalFileChooserProxy(connectionManager.GetConnection(), destination: DBusHelper.BusName, path: DBusHelper.ObjectPath);
         var version = await instance.GetVersionPropertyAsync().ConfigureAwait(false);
 
         return new FileChooserPortal(connectionManager, instance, version);

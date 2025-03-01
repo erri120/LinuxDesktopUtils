@@ -31,13 +31,13 @@ public partial class OpenUriPortal
         internal readonly string HandleToken = DBusHelper.CreateHandleToken();
 
         /// <inheritdoc/>
-        public Dictionary<string, Variant> ToVarDict()
+        public Dictionary<string, VariantValue> ToVarDict()
         {
-            return new Dictionary<string, Variant>(System.StringComparer.OrdinalIgnoreCase)
+            return new Dictionary<string, VariantValue>(System.StringComparer.OrdinalIgnoreCase)
             {
-                { "writable", new Variant(Writeable) },
-                { "ask", new Variant(Ask) },
-                { "handle_token", new Variant(HandleToken) },
+                { "writable", Writeable },
+                { "ask", Ask },
+                { "handle_token", HandleToken },
             };
         }
     }

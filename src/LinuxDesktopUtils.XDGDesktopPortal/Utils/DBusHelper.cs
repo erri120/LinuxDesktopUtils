@@ -10,7 +10,7 @@ internal static class DBusHelper
     public const string BusName = "org.freedesktop.portal.Desktop";
     public const string ObjectPath = "/org/freedesktop/portal/desktop";
 
-    public static readonly Dictionary<string, Variant> EmptyVarDict = new(StringComparer.OrdinalIgnoreCase);
+    public static readonly Dictionary<string, VariantValue> EmptyVarDict = new(StringComparer.OrdinalIgnoreCase);
 
     internal static string CreateHandleToken() => $"LinuxDesktopUtils_{Random.Shared.Next().ToString(CultureInfo.InvariantCulture)}";
 

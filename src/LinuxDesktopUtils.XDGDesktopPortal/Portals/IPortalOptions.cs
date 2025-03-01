@@ -14,6 +14,6 @@ public interface IPortalOptions
     /// Creates a dictionary out of the values.
     /// </summary>
 #pragma warning disable MA0016
-    Dictionary<string, Variant> ToVarDict();
+    Dictionary<string, VariantValue> ToVarDict();
 #pragma warning restore MA0016
 }

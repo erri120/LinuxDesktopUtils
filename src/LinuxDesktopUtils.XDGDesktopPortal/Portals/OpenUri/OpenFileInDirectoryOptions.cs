@@ -16,11 +16,11 @@ public partial class OpenUriPortal
         internal readonly string HandleToken = DBusHelper.CreateHandleToken();
 
         /// <inheritdoc/>
-        public Dictionary<string, Variant> ToVarDict()
+        public Dictionary<string, VariantValue> ToVarDict()
         {
-            return new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+            return new Dictionary<string, VariantValue>(StringComparer.OrdinalIgnoreCase)
             {
-                { "handle_token", new Variant(HandleToken) },
+                { "handle_token", HandleToken },
             };
         }
     }

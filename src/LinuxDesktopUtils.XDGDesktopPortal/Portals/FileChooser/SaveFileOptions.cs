@@ -66,9 +66,9 @@ public partial class FileChooserPortal
         public Optional<FilePath> CurrentFile { get; init; }
 
         /// <inheritdoc/>
-        public Dictionary<string, Variant> ToVarDict()
+        public Dictionary<string, VariantValue> ToVarDict()
         {
-            var varDict = new Dictionary<string, Variant>(StringComparer.OrdinalIgnoreCase)
+            var varDict = new Dictionary<string, VariantValue>(StringComparer.OrdinalIgnoreCase)
             {
                 { "handle_token", HandleToken },
                 { "modal", IsDialogModal },
@@ -95,14 +95,14 @@ public partial class FileChooserPortal
             {
                 // The byte array contains a path in the same encoding as the file system, and it’s expected to be terminated by a nul byte.
                 var bytes = SuggestedFolder.Value.ToByteArray(encoding: Encoding.UTF8, nullTerminated: true);
-                varDict.Add("current_folder", Variant.FromArray(new Array<byte>(bytes)));
+                varDict.Add("current_folder", VariantValue.Array(bytes));
             }
 
             if (CurrentFile.HasValue)
             {
                 // The byte array contains a path in the same encoding as the file system, and it’s expected to be terminated by a nul byte.
                 var bytes = CurrentFile.Value.ToByteArray(encoding: Encoding.UTF8, nullTerminated: true);
-                varDict.Add("current_file", Variant.FromArray(new Array<byte>(bytes)));
+                varDict.Add("current_file", VariantValue.Array(bytes));
             }
 
             return varDict;
