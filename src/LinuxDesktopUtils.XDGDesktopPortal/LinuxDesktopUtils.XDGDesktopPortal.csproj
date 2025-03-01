@@ -35,6 +35,11 @@
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
             <Link>DBusXml\org.freedesktop.portal.Secret.xml</Link>
         </AdditionalFiles>
+
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Trash.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.Trash.xml</Link>
+        </AdditionalFiles>
     </ItemGroup>
 
     <ItemGroup>

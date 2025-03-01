@@ -60,6 +60,11 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
     /// </summary>
     public ValueTask<SecretPortal> GetSecretPortalAsync() => GetPortalAsync(SecretPortal.CreateAsync);
 
+    /// <summary>
+    /// Gets the <see cref="TrashPortal"/>.
+    /// </summary>
+    public ValueTask<TrashPortal> GetTrashPortalAsync() => GetPortalAsync(TrashPortal.CreateAsync);
+
     private ValueTask<T> GetPortalAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {
         if (!_portalInstances.TryGetValue(typeof(T), out var portal)) return GetPortalImplAsync(factory);
