@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solutionItems", ".solution
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		.gitattributes = .gitattributes
+		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BDC8C009-CB57-4C61-B4CF-91DDECCEF9A3}"
