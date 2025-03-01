@@ -32,6 +32,12 @@ public static class Program
 
         try
         {
+            var accountPortal = await connectionManager.GetAccountPortalAsync();
+            var res = await accountPortal.GetUserInformationAsync(options: new AccountPortal.GetUserInformationOptions
+            {
+                Reason = "Because I can",
+            });
+
             var secretPortal = await connectionManager.GetSecretPortalAsync();
             await secretPortal.RetrieveSecretAsync(cancellationToken: cts.Token);
 

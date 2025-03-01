@@ -10,6 +10,8 @@ The package `LinuxDesktopUtils.XDGBaseDirectories` implements version 0.8 of the
 
 The package `LinuxDesktopUtils.XDGDesktopPortals` makes the following [XDG Desktop Portals](https://flatpak.github.io/xdg-desktop-portal/docs/api-reference.html) available in an easy-to-use API:
 
+- [x] [Account](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Account.html) version 1
+  - [x] `GetUserInformation`
 - [ ] [File Chooser](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.FileChooser.html) version 4
   - [x] `OpenFile`
   - [x] `SaveFile`
@@ -18,7 +20,7 @@ The package `LinuxDesktopUtils.XDGDesktopPortals` makes the following [XDG Deskt
   - [x] `OpenURI`
   - [x] `OpenFile`
   - [x] `OpenDirectory`
-  - [x] `SchemeSupported`
+  - [x] `SchemeSupported` added in version 5
 - [x] [Secret](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Secret.html) version 1
   - [x] `RetrieveSecret`: Note that this method requires a static application ID, which can only be obtained correctly for sandboxed applications. As such, applications running directly on the host will likely get a new master secret with each restart. Applications running on the host should use `libsecret` directly.
 - [x] [Trash](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Trash.html) version 1

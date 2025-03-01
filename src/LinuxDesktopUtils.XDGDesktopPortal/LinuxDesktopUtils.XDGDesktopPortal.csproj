@@ -16,6 +16,11 @@
     <ItemGroup>
         <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="DBusGeneratorMode" />
 
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Account.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.Account.xml</Link>
+        </AdditionalFiles>
+
         <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.FileChooser.xml">
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
             <Link>DBusXml\org.freedesktop.portal.FileChooser.xml</Link>

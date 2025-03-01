@@ -24,5 +24,8 @@ public record Response<T> : Response
     /// <summary>
     /// Gets the results of the response.
     /// </summary>
+    /// <remarks>
+    /// This is only available if <see cref="Response{T}.Status"/> is <see cref="ResponseStatus.Success"/>.
+    /// </remarks>
     public required Optional<T> Results { get; init; }
 }
