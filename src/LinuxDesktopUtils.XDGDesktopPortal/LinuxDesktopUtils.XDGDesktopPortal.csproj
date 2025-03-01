@@ -26,6 +26,11 @@
             <Link>DBusXml\org.freedesktop.portal.FileChooser.xml</Link>
         </AdditionalFiles>
 
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.NetworkMonitor.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.NetworkMonitor.xml</Link>
+        </AdditionalFiles> 
+
         <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.OpenURI.xml">
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
             <Link>DBusXml\org.freedesktop.portal.OpenURI.xml</Link>

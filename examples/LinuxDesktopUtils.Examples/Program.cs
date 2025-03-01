@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,6 +33,20 @@ public static class Program
 
         try
         {
+            var networkMonitorPortal = await connectionManager.GetNetworkMonitorPortalAsync();
+
+            var networkStatus = await networkMonitorPortal.GetStatusAsync();
+            Console.WriteLine($"Network status: {networkStatus}");
+
+            var canReachGoogle = await networkMonitorPortal.CanReachAsync(new Uri("https://google.com"));
+            Console.WriteLine($"Can reach google: {canReachGoogle}");
+
+            var canReachCloudFlareDnsIpv4 = await networkMonitorPortal.CanReachAsync(IPAddress.Parse("1.1.1.1"), port: 51);
+            Console.WriteLine($"Can reach cloudflare DNS (IPv4): {canReachCloudFlareDnsIpv4}");
+
+            var canReachCloudFlareDnsIpv6 = await networkMonitorPortal.CanReachAsync(IPAddress.Parse("2606:4700:4700::1111"), port: 51);
+            Console.WriteLine($"Can reach cloudflare DNS (IPv6): {canReachCloudFlareDnsIpv6}");
+
             var accountPortal = await connectionManager.GetAccountPortalAsync();
             var res = await accountPortal.GetUserInformationAsync(options: new AccountPortal.GetUserInformationOptions
             {

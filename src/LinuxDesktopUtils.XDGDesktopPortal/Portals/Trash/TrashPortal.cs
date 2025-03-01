@@ -46,8 +46,12 @@ public class TrashPortal : IPortal
     /// </summary>
     /// <param name="file">Absolute path to the file.</param>
     /// <returns>Whether the file was trashed successfully</returns>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<bool> TrashFileAsync(FilePath file)
     {
+        const uint addedInVersion = 1;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
+
         using var safeFileHandle = File.OpenHandle(file.Value, FileMode.Open, FileAccess.ReadWrite);
 
         var result = await _instance.TrashFileAsync(

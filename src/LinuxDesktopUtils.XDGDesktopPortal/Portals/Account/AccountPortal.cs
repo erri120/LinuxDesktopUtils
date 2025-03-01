@@ -47,11 +47,14 @@ public partial class AccountPortal : IPortal
     /// <param name="windowIdentifier">Identifier of the parent window.</param>
     /// <param name="options">Additional options.</param>
     /// <param name="cancellationToken">CancellationToken to cancel the request.</param>
+    /// <exception cref="PortalVersionException">Thrown if the installed portal backend doesn't support this method.</exception>
     public async Task<Response<GetUserInformationResults>> GetUserInformationAsync(
         Optional<WindowIdentifier> windowIdentifier = default,
         GetUserInformationOptions? options = null,
         Optional<CancellationToken> cancellationToken = default)
     {
+        const uint addedInVersion = 1;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
         if (cancellationToken.HasValue) cancellationToken.Value.ThrowIfCancellationRequested();
 
         options ??= new GetUserInformationOptions();

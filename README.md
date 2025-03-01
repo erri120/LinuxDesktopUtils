@@ -16,6 +16,13 @@ The package `LinuxDesktopUtils.XDGDesktopPortals` makes the following [XDG Deskt
   - [x] `OpenFile`
   - [x] `SaveFile`
   - [ ] `SaveFiles`
+- [ ] [Network Monitor](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.NetworkMonitor.html) version 3
+  - [x] `GetAvailable` added in version 2
+  - [x] `GetMetered` added in version 2
+  - [x] `GetConnectivity` added in version 2
+  - [x] `GetStatus` added in version 3
+  - [x] `CanReach` added in version 3
+  - [ ] Signal: `changed`
 - [x] [OpenURI](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.OpenURI.html) version 5
   - [x] `OpenURI`
   - [x] `OpenFile`
