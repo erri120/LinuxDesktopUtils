@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +15,8 @@ namespace LinuxDesktopUtils.XDGDesktopPortal;
 public sealed class DesktopPortalConnectionManager : IAsyncDisposable
 {
     private readonly CancellationTokenSource _cts = new();
-    private readonly ConcurrentDictionary<Type, IPortal> _portalInstances = new();
+    private readonly Dictionary<Type, IPortal> _portalInstances = new();
+    private readonly SemaphoreSlim _instancesSemaphore = new(initialCount: 1, maxCount: 1);
 
     private readonly Connection _connection;
     private readonly string _uniqueName;
@@ -75,12 +76,18 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
     {
         if (!_portalInstances.TryGetValue(typeof(T), out var portal)) return GetPortalImplAsync(factory);
         Debug.Assert(portal is T);
-        return new ValueTask<T>((portal as T)!);
+        return ValueTask.FromResult((portal as T)!);
     }
 
     private async ValueTask<T> GetPortalImplAsync<T>(Func<DesktopPortalConnectionManager, ValueTask<T>> factory) where T : class, IPortal
     {
-        T portal;
+        using var _ = await _instancesSemaphore.WaitDisposableAsync(_cts.Token).ConfigureAwait(false);
+        if (_portalInstances.TryGetValue(typeof(T), out var portal))
+        {
+            Debug.Assert(portal is T);
+            return (portal as T)!;
+        }
+
         try
         {
             portal = await factory(this).ConfigureAwait(false);
@@ -90,9 +97,9 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
             throw new PortalUnavailableException(typeof(T), e);
         }
 
-        var res = _portalInstances.GetOrAdd(typeof(T), portal);
-        Debug.Assert(res is T);
-        return (res as T)!;
+        Debug.Assert(portal is T);
+        _portalInstances[typeof(T)] = portal;
+        return (portal as T)!;
     }
 
     internal ValueTask<RequestWrapper> CreateRequestAsync(string handleToken, Optional<CancellationToken> customCancellationToken)
