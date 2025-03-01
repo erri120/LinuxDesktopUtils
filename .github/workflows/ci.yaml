@@ -15,6 +15,11 @@ jobs:
         with:
           submodules: "recursive"
 
+      - name: Setup .NET 9.x
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.x'
+
       - name: Info
         run: dotnet --info
 
