@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using R3;
 using Tmds.DBus.SourceGenerator;
 
 namespace LinuxDesktopUtils.XDGDesktopPortal;
@@ -118,5 +119,29 @@ public partial class NetworkMonitorPortal : IPortal
 
         var res = await _instance.CanReachAsync(hostname, port).ConfigureAwait(false);
         return res;
+    }
+
+    /// <summary>
+    /// Observes changes to the network configuration.
+    /// </summary>
+    public Observable<Unit> ObserveChanged()
+    {
+        const uint addedInVersion = 1;
+        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
+
+        return new SignalObservable<Unit>(observer => _instance.WatchChangedAsync(exception =>
+        {
+            if (exception is null) observer.OnNext(Unit.Default);
+            else observer.OnErrorResume(exception);
+        }, emitOnCapturedContext: false));
+    }
+
+    /// <summary>
+    /// Combines <see cref="ObserveChanged"/> with <see cref="GetStatusAsync"/>. The resulting
+    /// calls <see cref="GetStatusAsync"/> when <see cref="ObserveChanged"/> produces a value.
+    /// </summary>
+    public Observable<GetStatusResults> ObserveStatusChanges()
+    {
+        return ObserveChanged().SelectAwait(async (_, _) => await GetStatusAsync().ConfigureAwait(false));
     }
 }

@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using LinuxDesktopUtils.XDGDesktopPortal;
+using R3;
 
 namespace LinuxDesktopUtils.Examples;
 
@@ -46,6 +47,12 @@ public static class Program
 
             var canReachCloudFlareDnsIpv6 = await networkMonitorPortal.CanReachAsync(IPAddress.Parse("2606:4700:4700::1111"), port: 51);
             Console.WriteLine($"Can reach cloudflare DNS (IPv6): {canReachCloudFlareDnsIpv6}");
+
+            using var disposable = networkMonitorPortal
+                .ObserveStatusChanges()
+                .Subscribe(status => Console.WriteLine($"Status changed: {status}"));
+
+            cts.Token.WaitHandle.WaitOne();
 
             var accountPortal = await connectionManager.GetAccountPortalAsync();
             var res = await accountPortal.GetUserInformationAsync(options: new AccountPortal.GetUserInformationOptions

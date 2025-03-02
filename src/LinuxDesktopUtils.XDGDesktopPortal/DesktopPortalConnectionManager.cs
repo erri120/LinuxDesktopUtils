@@ -149,7 +149,8 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, this);
+        if (_isDisposed) return;
+
         try
         {
             await _cts.CancelAsync().ConfigureAwait(false);
