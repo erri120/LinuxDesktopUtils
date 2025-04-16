@@ -155,10 +155,7 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
         {
             await _cts.CancelAsync().ConfigureAwait(false);
             _cts.Dispose();
-
-            // NOTE(erri120): DisconnectedAsync returns an empty task, the result of the task is set by Dispose
             _connection.Dispose();
-            await _connection.DisconnectedAsync().ConfigureAwait(false);
         }
         catch (Exception)
         {
