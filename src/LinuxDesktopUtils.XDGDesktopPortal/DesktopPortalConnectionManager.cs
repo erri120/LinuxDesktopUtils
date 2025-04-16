@@ -69,6 +69,11 @@ public sealed class DesktopPortalConnectionManager : IAsyncDisposable
     public ValueTask<OpenUriPortal> GetOpenUriPortalAsync() => GetPortalAsync(OpenUriPortal.CreateAsync);
 
     /// <summary>
+    /// Gets the <see cref="ScreenshotPortal"/>.
+    /// </summary>
+    public ValueTask<ScreenshotPortal> GetScreenshotPortalAsync() => GetPortalAsync(ScreenshotPortal.CreateAsync);
+
+    /// <summary>
     /// Gets the <see cref="SecretPortal"/>.
     /// </summary>
     public ValueTask<SecretPortal> GetSecretPortalAsync() => GetPortalAsync(SecretPortal.CreateAsync);

@@ -34,7 +34,13 @@ public static class Program
 
         try
         {
+            var screenshotPortal = await connectionManager.GetScreenshotPortalAsync();
+            var screenshotResults = await screenshotPortal.ScreenshotAsync();
+
             var networkMonitorPortal = await connectionManager.GetNetworkMonitorPortalAsync();
+
+            var observable = await networkMonitorPortal.ObserveChangedAsync();
+            using var disposable = observable.Subscribe(_ => Console.WriteLine("Status changed"));
 
             var networkStatus = await networkMonitorPortal.GetStatusAsync();
             Console.WriteLine($"Network status: {networkStatus}");
@@ -47,12 +53,6 @@ public static class Program
 
             var canReachCloudFlareDnsIpv6 = await networkMonitorPortal.CanReachAsync(IPAddress.Parse("2606:4700:4700::1111"), port: 51);
             Console.WriteLine($"Can reach cloudflare DNS (IPv6): {canReachCloudFlareDnsIpv6}");
-
-            using var disposable = networkMonitorPortal
-                .ObserveStatusChanges()
-                .Subscribe(status => Console.WriteLine($"Status changed: {status}"));
-
-            cts.Token.WaitHandle.WaitOne();
 
             var accountPortal = await connectionManager.GetAccountPortalAsync();
             var res = await accountPortal.GetUserInformationAsync(options: new AccountPortal.GetUserInformationOptions

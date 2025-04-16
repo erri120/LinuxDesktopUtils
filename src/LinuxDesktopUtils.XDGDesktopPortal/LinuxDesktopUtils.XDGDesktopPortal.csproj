@@ -42,6 +42,11 @@
             <Link>DBusXml\org.freedesktop.portal.Request.xml</Link>
         </AdditionalFiles>
 
+        <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Screenshot.xml">
+            <DBusGeneratorMode>Proxy</DBusGeneratorMode>
+            <Link>DBusXml\org.freedesktop.portal.Screenshot.xml</Link>
+        </AdditionalFiles>
+
         <AdditionalFiles Include="..\..\extern\flatpak\xdg-desktop-portal\data\org.freedesktop.portal.Secret.xml">
             <DBusGeneratorMode>Proxy</DBusGeneratorMode>
             <Link>DBusXml\org.freedesktop.portal.Secret.xml</Link>

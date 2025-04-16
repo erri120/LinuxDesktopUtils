@@ -28,6 +28,9 @@ The package `LinuxDesktopUtils.XDGDesktopPortals` makes the following [XDG Deskt
   - [x] `OpenFile`
   - [x] `OpenDirectory`
   - [x] `SchemeSupported` added in version 5
+- [ ] [Screenshot](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Screenshot.html) version 2
+  - [x] `Screenshot`
+  - [ ] `PickColor`
 - [x] [Secret](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Secret.html) version 1
   - [x] `RetrieveSecret`: Note that this method requires a static application ID, which can only be obtained correctly for sandboxed applications. As such, applications running directly on the host will likely get a new master secret with each restart. Applications running on the host should use `libsecret` directly.
 - [x] [Trash](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.Trash.html) version 1
