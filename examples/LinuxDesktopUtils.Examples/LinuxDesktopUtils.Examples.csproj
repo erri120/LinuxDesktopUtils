@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
