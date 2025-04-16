@@ -124,24 +124,21 @@ public partial class NetworkMonitorPortal : IPortal
     /// <summary>
     /// Observes changes to the network configuration.
     /// </summary>
-    public Observable<Unit> ObserveChanged()
+    public async ValueTask<Observable<Unit>> ObserveChangedAsync()
     {
-        const uint addedInVersion = 1;
-        PortalVersionException.ThrowIf(requiredVersion: addedInVersion, availableVersion: _version);
+        var subject = new Subject<Unit>();
 
-        return new SignalObservable<Unit>(observer => _instance.WatchChangedAsync(exception =>
+        var disposable = await _instance.WatchChangedAsync(exception =>
         {
-            if (exception is null) observer.OnNext(Unit.Default);
-            else observer.OnErrorResume(exception);
-        }, emitOnCapturedContext: false));
-    }
+            if (exception is null) subject.OnNext(Unit.Default);
+            else subject.OnErrorResume(exception);
+        }, emitOnCapturedContext: false).ConfigureAwait(false);
 
-    /// <summary>
-    /// Combines <see cref="ObserveChanged"/> with <see cref="GetStatusAsync"/>. The resulting
-    /// calls <see cref="GetStatusAsync"/> when <see cref="ObserveChanged"/> produces a value.
-    /// </summary>
-    public Observable<GetStatusResults> ObserveStatusChanges()
-    {
-        return ObserveChanged().SelectAwait(async (_, _) => await GetStatusAsync().ConfigureAwait(false));
+        return Observable.Create<Unit, ValueTuple<Subject<Unit>, IDisposable>>((subject, disposable), static (observer, state) =>
+        {
+            var (subject, disposable1) = state;
+            var disposable2 = subject.Subscribe(observer);
+            return Disposable.Combine(disposable1, disposable2);
+        });
     }
 }
